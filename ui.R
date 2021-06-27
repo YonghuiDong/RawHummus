@@ -6,6 +6,7 @@ library(shinyFiles)
 library(RaMS)
 library(plotly)
 library(DT)
+library(shinycustomloader)
 
 dashboardPage(
   #freshTheme = mytheme,

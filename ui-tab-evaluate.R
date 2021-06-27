@@ -47,7 +47,6 @@ fluidRow(
 
   column(width = 9,
          box(
-           loadingState(),
            width = 12,
            inputId = "outDir_card",
            title = strong("TIC Plot"),
@@ -56,7 +55,7 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           plotlyOutput("ticPlot")
+           shinycustomloader::withLoader(plotlyOutput("ticPlot"), type = "html", loader = "dnaspin")
          )
 
          )
