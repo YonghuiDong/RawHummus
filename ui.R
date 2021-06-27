@@ -3,6 +3,9 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(fresh)
 library(shinyFiles)
+library(RaMS)
+library(plotly)
+library(DT)
 
 dashboardPage(
   #freshTheme = mytheme,
@@ -26,7 +29,8 @@ dashboardPage(
   body = dashboardBody(
     tabItems(
       tabItem(tabName = "home",  source("ui-tab-home.R", local = TRUE)$value),
-      tabItem(tabName = "convert",  source("ui-tab-convert.R", local = TRUE)$value)
+      tabItem(tabName = "convert",  source("ui-tab-convert.R", local = TRUE)$value),
+      tabItem(tabName = "evaluate",  source("ui-tab-evaluate.R", local = TRUE)$value)
       )
     ),
 
