@@ -1,7 +1,6 @@
 library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
-library(fresh)
 library(shinyFiles)
 library(RaMS)
 library(plotly)
@@ -9,7 +8,6 @@ library(DT)
 library(shinycustomloader)
 
 dashboardPage(
-  #freshTheme = mytheme,
 
   ## Header ----------------------------------------------------------------------
   header = dashboardHeader(),

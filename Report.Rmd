@@ -1,0 +1,67 @@
+---
+title: "RawHumms Data-Quality Control Report"
+date: '`r format(Sys.Date(), "%B, %Y")`'
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+params:
+  n: NA
+---
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+library(dplyr)
+library(plotly)
+library(DT)
+msdata <- params$n
+```
+
+## Data Overview
+
+
+
+Below is an interactive total ion current (TIC) plot.
+```{r, echo = FALSE, out.width = "100%"}
+p1 <- ggplot(msdata$TIC) + geom_line(aes(x = rt, y=int, color=filename)) +
+  facet_wrap(~filename, scales = "free_y", ncol = 1) +
+  labs(x="Retention time (min)", y="Intensity", color="File name: ") +
+  theme(legend.position="top") +
+  theme_bw()
+ggplotly(p1)
+```
+
+Below is the ion intensity plot. Dash lines represents the mean peak area ± 1.96 SD.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
+TIC <- msdata$TIC %>%
+  group_by(filename) %>%
+  summarise(peakArea = sum(int)) %>%
+  mutate(Mean = mean(peakArea),
+         SD = sd(peakArea),
+         CV = round(SD/Mean*100, 2))
+
+p2 <- ggplot(TIC, aes(x = filename, y = peakArea, group = 1)) +
+  geom_bar(stat = "identity", aes(fill = filename), alpha = 0.5) +
+  geom_hline(aes(yintercept = Mean + 1.96*SD), linetype = "dashed", color = "grey60") +
+  geom_hline(aes(yintercept = Mean - 1.96*SD), linetype = "dashed", color = "grey60") +
+  theme_bw()
+
+ggplotly(p2)
+```
+
+
+
+```{r cars}
+head(msdata$TIC)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

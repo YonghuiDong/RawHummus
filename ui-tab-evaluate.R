@@ -23,7 +23,7 @@ fluidRow(
          ),
 
 
-  column(width = 3,
+  column(width = 4,
 
          box(
            width = 12,
@@ -37,7 +37,7 @@ fluidRow(
            fileInput(inputId = "convertedData",
                      label = "Upload data (mzML/mzXML format):",
                      multiple = TRUE,
-                     accept = c("mzML", "mzXML")),
+                     accept = c(".mzML", ".mzXML")),
            actionButton("evaluate", "Evaluate", icon("paper-plane"),
                         style = "color: #fff; background-color: #CD0000; border-color: #9E0000"
                         )
@@ -45,19 +45,19 @@ fluidRow(
          ),
 
 
-  column(width = 9,
+  column(width = 8,
+
          box(
            width = 12,
-           inputId = "outDir_card",
-           title = strong("TIC Plot"),
+           inputId = "report_card",
+           title = strong("Report"),
            status = "success",
            solidHeader = FALSE,
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           shinycustomloader::withLoader(plotlyOutput("ticPlot"), type = "html", loader = "dnaspin")
-         )
-
+           shinycustomloader::withLoader(uiOutput("report_button"), type = "html", loader = "dnaspin")
+           )
          )
   )
 
