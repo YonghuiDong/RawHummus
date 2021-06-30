@@ -1,4 +1,4 @@
-m <- matrix(data = NA, nrow = 3, ncol = 2, dimnames = list(NULL, c("m/z", "Expected RT")))
+m <- matrix(data = NA, nrow = 3, ncol = 2, dimnames = list(NULL, c("mz", "Expected RT")))
 
 fluidRow(
 
@@ -42,7 +42,7 @@ fluidRow(
                      accept = c(".mzML", ".mzXML")),
 
            shinyMatrix::matrixInput(
-             inputId = "peaks",
+             inputId = "mypeaks",
              label = "2. Optional: Add peaks of interest to monitor",
              value = m,
              rows = list(extend = TRUE, names = FALSE),

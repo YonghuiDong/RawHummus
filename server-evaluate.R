@@ -27,6 +27,21 @@ rts <- InputValidator$new()
 rts$add_rule("myrt", sv_between(0.01, 3))
 rts$enable()
 
+## 1.4 get peaks input
+mypeaks <- reactive({
+  return(input$mypeaks)
+})
+
+## 1.5 get ppm input
+myppm <- reactive({
+  return(input$myppm)
+})
+
+## 1.6 get rt input
+myrt <- reactive({
+  return(input$myrt)
+})
+
 # 2. report
 
 output$report_button <- ({NULL})
@@ -40,26 +55,27 @@ observeEvent(input$evaluate, {
     downloadButton("report", "Download Report", style="color: #fff; background-color: #00b300; border-color: #009900")
     })
 
-  ## 2.2 generate report
-  output$report <- downloadHandler(
-
-    filename <- paste0(Sys.Date(), "_Report.html"),
-    content <- function(file){
-
-      tempReport <- file.path(tempdir(), "Report.Rmd")
-      file.copy("Report.Rmd", tempReport, overwrite = TRUE)
-      params <- list(msdata = msdata,
-                     peaks = input$peaks,
-                     myppm = input$myppm,
-                     myrt = input$myrt)
-      rmarkdown::render(tempReport,
-                        output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
-                        )
-
-      }
-
-    )
-
 })
+
+## 2.2 generate report
+
+output$report <- downloadHandler(
+
+  filename <- paste0(Sys.Date(), "_Report.html"),
+  content <- function(file){
+
+    tempReport <- file.path(tempdir(), "Report.Rmd")
+    file.copy("Report.Rmd", tempReport, overwrite = TRUE)
+    params <- list(msdata = msdata,
+                   mypeaks = mypeaks(),
+                   myppm = myppm(),
+                   myrt = myrt())
+    rmarkdown::render(tempReport,
+                      output_file = file,
+                      params = params,
+                      envir = new.env(parent = globalenv())
+                      )
+    }
+
+)
+

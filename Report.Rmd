@@ -8,24 +8,28 @@ output:
     toc_float: true
 params:
   msdata: NA
-  peaks: NA
+  mypeaks: NA
   myppm: NA
   myrt: NA
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
 library(dplyr)
 library(plotly)
-library(DT)
+library(data.table)
+library(purrr)
 msdata <- params$msdata
-peaks <- params$peaks
+mypeaks <- params$mypeaks
+## remove rows with m/z being NA in peaks
+mypeaks <- as.data.frame(mypeaks) %>% filter(!is.na(mz))
+colnames(mypeaks)[2] <- "rt"
 myppm <- params$myppm
 myrt <- params$myrt
 ```
 
 ## Data Overview
-
-
 
 Below is an interactive total ion current (TIC) plot.
 ```{r, echo = FALSE, out.width = "100%"}
@@ -59,17 +63,44 @@ ggplotly(p2)
 
 
 ```{r cars}
-head(peaks)
+head(mypeaks)
 print(myppm)
 print(myrt)
 ```
 
-## Including Plots
+## MS1
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+```{r pressure, echo=FALSE, out.width = "100%"}
+
+minRT <- min(msdata$MS1$rt)
+maxRT <- max(msdata$MS1$rt)
+b = vector(mode = "list", length = dim(mypeaks)[1])
+for (i in 1:dim(mypeaks)[1]){
+  b[[i]] = msdata$MS1[mz%between%pmppm(mypeaks$mz[i], myppm) & rt%between%c(max(mypeaks$rt[i] - myrt, minRT), min(mypeaks$rt[i] + myrt, maxRT))]
+  names(b)[i] <- paste0("M", mypeaks$mz[i], "RT", mypeaks$rt[i])
+}
+
+ans <- purrr::map_df(b, ~as.data.frame(.x), .id="id")
+
+if (dim(ans)[1] > 0) {
+  pp <- ggplot(ans) + geom_line(aes(x = rt, y=int, color=filename)) +
+  facet_wrap(~ id, scales = "free_y", ncol = 1) +
+  labs(x="Retention time (min)", y="Intensity", color="File name: ") +
+  theme(legend.position="top") +
+  theme_bw()
+ggplotly(pp)
+} else {
+  
+  print("not found")
+}
+
+```
+
+```{r}
+head(mypeaks)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

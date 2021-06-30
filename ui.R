@@ -6,7 +6,6 @@ library(shinyMatrix)
 library(shinyvalidate)
 library(RaMS)
 library(plotly)
-library(DT)
 library(shinycustomloader)
 
 dashboardPage(
