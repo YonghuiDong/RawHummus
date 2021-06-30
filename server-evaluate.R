@@ -1,4 +1,6 @@
-# 1. check input files
+# 1. check input files and parameters(if any)
+
+##1.1 check input files
 userInput <- reactive({
 
   infile <- input$convertedData
@@ -15,8 +17,19 @@ userInput <- reactive({
 
 })
 
+## 1.2 check ppm range
+ppms <- InputValidator$new()
+ppms$add_rule("myppm", sv_between(1, 100))
+ppms$enable()
+
+## 1.3 check rt tolerance range
+rts <- InputValidator$new()
+rts$add_rule("myrt", sv_between(0.01, 3))
+rts$enable()
+
 # 2. report
-#output$report_button <- ({NULL})
+output$fileLoad <- ({NULL})
+output$report_button <- ({NULL})
 
 observeEvent(input$evaluate, {
 
@@ -37,7 +50,10 @@ observeEvent(input$evaluate, {
 
       tempReport <- file.path(tempdir(), "Report.Rmd")
       file.copy("Report.Rmd", tempReport, overwrite = TRUE)
-      params <- list(n = msdata)
+      params <- list(msdata = msdata,
+                     peaks = input$peaks,
+                     myppm = input$myppm,
+                     myrt = input$myrt)
       rmarkdown::render(tempReport,
                         output_file = file,
                         params = params,

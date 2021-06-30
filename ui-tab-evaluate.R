@@ -1,3 +1,5 @@
+m <- matrix(data = NA, nrow = 3, ncol = 2, dimnames = list(NULL, c("m/z", "Expected RT")))
+
 fluidRow(
 
   column(width = 12,
@@ -23,29 +25,68 @@ fluidRow(
          ),
 
 
-  column(width = 4,
+  column(width = 5,
 
          box(
            width = 12,
            inputId = "input_card",
-           title = strong("Upload data panel"),
+           title = strong("Data Input Panel"),
            status = "primary",
            solidHeader = FALSE,
            collapsible = FALSE,
            collapsed = FALSE,
            closable = FALSE,
            fileInput(inputId = "convertedData",
-                     label = "Upload data (mzML/mzXML format):",
+                     label = "1. Upload data (mzML/mzXML format):",
                      multiple = TRUE,
                      accept = c(".mzML", ".mzXML")),
+
+           shinyMatrix::matrixInput(
+             inputId = "peaks",
+             label = "2. Optional: Add peaks of interest to monitor",
+             value = m,
+             rows = list(extend = TRUE, names = FALSE),
+             cols = list(names = TRUE),
+             class = "numeric"
+           ),
+
+           numericInput(
+             inputId = "myppm",
+             label = "mass accuracy tolerance (ppm: 1-100)",
+             value = 5,
+             min = 1,
+             max = 100
+           ),
+
+           numericInput(
+             inputId = "myrt",
+             label = "retention time tolerance (min: 0.01-3)",
+             value = 1,
+             min = 0.1,
+             max = 3
+           ),
+
            actionButton("evaluate", "Evaluate", icon("paper-plane"),
                         style = "color: #fff; background-color: #CD0000; border-color: #9E0000"
                         )
            )
+
          ),
 
 
-  column(width = 8,
+  column(width = 7,
+
+         box(
+           width = 12,
+           inputId = "Files_card",
+           title = strong("File Loading Status"),
+           status = "success",
+           solidHeader = FALSE,
+           collapsible = TRUE,
+           collapsed = FALSE,
+           closable = FALSE,
+           shinycustomloader::withLoader(textOutput("fileLoad"), type = "html", loader = "dnaspin")
+         ),
 
          box(
            width = 12,

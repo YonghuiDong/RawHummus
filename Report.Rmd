@@ -7,14 +7,20 @@ output:
     toc: true
     toc_float: true
 params:
-  n: NA
+  msdata: NA
+  peaks: NA
+  myppm: NA
+  myrt: NA
 ---
 
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
 library(dplyr)
 library(plotly)
 library(DT)
-msdata <- params$n
+msdata <- params$msdata
+peaks <- params$peaks
+myppm <- params$myppm
+myrt <- params$myrt
 ```
 
 ## Data Overview
@@ -53,7 +59,9 @@ ggplotly(p2)
 
 
 ```{r cars}
-head(msdata$TIC)
+head(peaks)
+print(myppm)
+print(myrt)
 ```
 
 ## Including Plots
