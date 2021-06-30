@@ -78,18 +78,6 @@ fluidRow(
 
          box(
            width = 12,
-           inputId = "Files_card",
-           title = strong("File Loading Status"),
-           status = "success",
-           solidHeader = FALSE,
-           collapsible = TRUE,
-           collapsed = FALSE,
-           closable = FALSE,
-           shinycustomloader::withLoader(textOutput("fileLoad"), type = "html", loader = "dnaspin")
-         ),
-
-         box(
-           width = 12,
            inputId = "report_card",
            title = strong("Report"),
            status = "success",

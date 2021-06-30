@@ -28,7 +28,7 @@ rts$add_rule("myrt", sv_between(0.01, 3))
 rts$enable()
 
 # 2. report
-output$fileLoad <- ({NULL})
+
 output$report_button <- ({NULL})
 
 observeEvent(input$evaluate, {
@@ -36,13 +36,11 @@ observeEvent(input$evaluate, {
    ## 2.1 generate report button
   output$report_button <- renderUI({
     validate(need(length(userInput()) >= 2, "Attention: at least 2 data files are required to generate the report"))
+    msdata <<- RaMS::grabMSdata(files = userInput())
     downloadButton("report", "Download Report", style="color: #fff; background-color: #00b300; border-color: #009900")
     })
 
-  ## 2.2 read the files
-  msdata <- RaMS::grabMSdata(files = userInput())
-
-  ## 2.3 generate report
+  ## 2.2 generate report
   output$report <- downloadHandler(
 
     filename <- paste0(Sys.Date(), "_Report.html"),
