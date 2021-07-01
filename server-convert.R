@@ -1,26 +1,26 @@
+msconvertPath <- reactive({
+  return(input$msconvert)
+})
+
+outPath <- reactive({
+  return(input$outdir)
+})
+
 volumes = getVolumes()
 
 observe({
-  # 1. choose MSConvert software path, exe file type
-  shinyFiles::shinyFileChoose(input, "msconvert", roots = volumes(), filetypes = ("exe"))
-  if(!is.null(input$msconvert)){
-    softwarePath <- parseFilePaths(volumes(), input$msconvert)
-    output$msconvertPath <- renderText(softwarePath$datapath)
-  }
+  # 1. choose MSConvert software path
+  output$msconvertPath <- renderText(msconvertPath())
 
   # 2. choose raw files
   shinyFiles::shinyFileChoose(input, "files", roots = volumes())
-  if(!is.null(input$rawfiles)){
-    rawPath <- parseFilePaths(volumes(), input$rawfiles)
-    output$rawfilesPath <- renderUI({HTML(paste(rawPath$datapath, sep = "", collapse = '<br/>'))})
+  if(!is.null(input$files)){
+    rawPath <- parseFilePaths(volumes(), input$files) # dataframe type
+    output$filesPath <- renderUI({HTML(paste(rawPath$datapath, sep = "", collapse = '<br/>'))})
   }
 
   # 3. choose output folder
-  shinyFiles::shinyDirChoose(input, 'outfiles', roots = volumes())
-  if(!is.null(input$outfiles)){
-    outfilesdir <- parseDirPath(volumes(), input$outfiles)
-    output$outDir <- renderText(outfilesdir)
-  }
+  output$outDir <- renderText(outPath())
 
   # 4. execute conversion
   observeEvent(input$convert, {

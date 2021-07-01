@@ -23,7 +23,7 @@ fluidRow(
          ),
 
 
-  column(width = 3,
+  column(width = 5,
 
          box(
            width = 12,
@@ -34,18 +34,9 @@ fluidRow(
            collapsible = FALSE,
            collapsed = FALSE,
            closable = FALSE,
-           strong("Select msconvert.exe software:"),
-           br(),
-           br(),
-           shinyFiles::shinyFilesButton(id = "msconvert",
-                                        label = "MSConvert",
-                                        title = "",
-                                        multiple = FALSE,
-                                        buttonType = "default",
-                                        class = NULL),
-
-           br(),
-           br(),
+           textInput(inputId = "msconvert",
+                     label = "Paste msconvert.exe path here",
+                     placeholder = "C:/Program Files (x86)/ProteoWizard/ProteoWizard/msconvert.exe"),
 
            strong("Select raw data:"),
            br(),
@@ -60,17 +51,9 @@ fluidRow(
            br(),
            br(),
 
-           strong("Save converted data in:"),
-           br(),
-           br(),
-
-           shinyDirButton(id = "outfiles",
-                          label = "Directory",
-                          title = "",
-                          multiple = FALSE),
-
-           br(),
-           br(),
+           textInput(inputId = "outdir",
+                     label = "Choose directory",
+                     placeholder = "D:/Data"),
 
            actionButton("convert", "Convert", icon("paper-plane"),
                         style = "color: #fff; background-color: #CD0000; border-color: #9E0000"
@@ -79,7 +62,7 @@ fluidRow(
          ),
 
 
-  column(width = 9,
+  column(width = 7,
          box(
            width = 12,
            inputId = "msconvert_card",
@@ -102,7 +85,7 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           htmlOutput("rawfilesPath")
+           htmlOutput("filesPath")
            ),
 
          box(
