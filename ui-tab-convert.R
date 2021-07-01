@@ -50,7 +50,7 @@ fluidRow(
            strong("Select raw data:"),
            br(),
            br(),
-           shinyFiles::shinyFilesButton(id = "rawfiles",
+           shinyFiles::shinyFilesButton(id = "files",
                                         label = "Raw Data",
                                         title = "",
                                         multiple = TRUE,

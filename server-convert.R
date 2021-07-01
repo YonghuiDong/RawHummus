@@ -9,7 +9,7 @@ observe({
   }
 
   # 2. choose raw files
-  shinyFiles::shinyFileChoose(input, "rawfiles", roots = volumes())
+  shinyFiles::shinyFileChoose(input, "files", roots = volumes())
   if(!is.null(input$rawfiles)){
     rawPath <- parseFilePaths(volumes(), input$rawfiles)
     output$rawfilesPath <- renderUI({HTML(paste(rawPath$datapath, sep = "", collapse = '<br/>'))})

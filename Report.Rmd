@@ -1,5 +1,5 @@
 ---
-title: "RawHumms Data-Quality Control Report"
+title: "RawHumms Data Quality Control Report"
 date: '`r format(Sys.Date(), "%B, %Y")`'
 output: 
   html_document:
@@ -16,50 +16,61 @@ editor_options:
 ---
 
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
-library(dplyr)
-library(plotly)
-library(data.table)
-library(purrr)
+# get data and clean them
 msdata <- params$msdata
 mypeaks <- params$mypeaks
-## remove rows with m/z being NA in peaks
-mypeaks <- as.data.frame(mypeaks) %>% filter(!is.na(mz))
-colnames(mypeaks)[2] <- "rt"
 myppm <- params$myppm
 myrt <- params$myrt
+## remove rows with m/z being NA in mypeaks and rename RT column
+mypeaks <- as.data.frame(mypeaks) %>% 
+  rename(rt = Expected_RT) %>%
+  filter(!is.na(mz))
 ```
 
 ## Data Overview
 
 Below is an interactive total ion current (TIC) plot.
+
 ```{r, echo = FALSE, out.width = "100%"}
-p1 <- ggplot(msdata$TIC) + geom_line(aes(x = rt, y=int, color=filename)) +
+plotTIC <- ggplot(msdata$TIC) + 
+  geom_line(aes(x = rt, y = int, color = filename)) +
   facet_wrap(~filename, scales = "free_y", ncol = 1) +
-  labs(x="Retention time (min)", y="Intensity", color="File name: ") +
-  theme(legend.position="top") +
+  labs(x = "Retention Time (min)", y = "Intensity", color = "File name: ") +
+  theme(legend.position = "top") +
   theme_bw()
-ggplotly(p1)
+
+ggplotly(plotTIC)
+```
+
+Here is the EIC
+
+```{r, echo = FALSE, out.width = "100%"}
+plotEIC <- ggplot(msdata$BPC) + 
+  geom_line(aes(x = rt, y = int, color = filename)) +
+  facet_wrap(~ filename, scales = "free_y", ncol = 1) +
+  labs(x = "Retention Time (min)", y = "Intensity", color = "File name: ") +
+  theme(legend.position = "top") +
+  theme_bw()
+
+ggplotly(plotEIC)
 ```
 
 Below is the ion intensity plot. Dash lines represents the mean peak area ± 1.96 SD.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
-TIC <- msdata$TIC %>%
+sumTIC <- msdata$TIC %>%
   group_by(filename) %>%
   summarise(peakArea = sum(int)) %>%
   mutate(Mean = mean(peakArea),
          SD = sd(peakArea),
          CV = round(SD/Mean*100, 2))
 
-p2 <- ggplot(TIC, aes(x = filename, y = peakArea, group = 1)) +
+plotSumTIC <- ggplot(sumTIC, aes(x = filename, y = peakArea, group = 1)) +
   geom_bar(stat = "identity", aes(fill = filename), alpha = 0.5) +
-  geom_hline(aes(yintercept = Mean + 1.96*SD), linetype = "dashed", color = "grey60") +
-  geom_hline(aes(yintercept = Mean - 1.96*SD), linetype = "dashed", color = "grey60") +
   theme_bw()
 
-ggplotly(p2)
+ggplotly(plotSumTIC)
 ```
-
 
 
 ```{r cars}
@@ -70,33 +81,72 @@ print(myrt)
 
 ## MS1
 
-You can also embed plots, for example:
+`RawHummus` automatically search for **6** peaks across the RT, and evaluate them.
 
-
-```{r pressure, echo=FALSE, out.width = "100%"}
-
+```{r echo = FALSE, out.width = "100%"}
+# get min and max RT of madata
 minRT <- min(msdata$MS1$rt)
 maxRT <- max(msdata$MS1$rt)
-b = vector(mode = "list", length = dim(mypeaks)[1])
-for (i in 1:dim(mypeaks)[1]){
-  b[[i]] = msdata$MS1[mz%between%pmppm(mypeaks$mz[i], myppm) & rt%between%c(max(mypeaks$rt[i] - myrt, minRT), min(mypeaks$rt[i] + myrt, maxRT))]
-  names(b)[i] <- paste0("M", mypeaks$mz[i], "RT", mypeaks$rt[i])
+# get lists of peaks for evaluation
+topPeaks <- msdata$MS1 %>%
+  mutate(bins = ntile(rt, 6)) %>%
+  group_by(bins) %>%
+  slice_max(int, n = 1) %>%
+  ungroup() %>%
+  select(rt, mz)
+# search in raw data
+autoTarget <- vector(mode = "list", length = dim(topPeaks)[1])
+for (i in 1:dim(topPeaks)[1]){
+  autoTarget[[i]] <- msdata$MS1[mz%between%pmppm(topPeaks$mz[i], myppm) & 
+                                 rt%between%c(max(topPeaks$rt[i] - myrt, minRT), min(topPeaks$rt[i] + myrt,maxRT))]
+  names(autoTarget)[i] <- paste0("mz:", round(topPeaks$mz[i], 3), " RT:", round(topPeaks$rt[i], 2))
 }
+# unlist
+autoTarget <- dplyr::bind_rows(autoTarget, .id = "id")
+# plot
+if (nrow(autoTarget) > 0) {
+    pp <- ggplot(autoTarget) + 
+      geom_line(aes(x = rt, y = int, color = filename)) +
+      facet_wrap(~ id, scales = "free_y", ncol = 2) +
+      labs(x = "Retention time (min)", y = "Intensity", color = "File name: ") +
+      theme(legend.position = "top") +
+      theme_bw()
+    ggplotly(pp)
+    } else {
+      print("Peasks of interests are not found")
+    }
 
-ans <- purrr::map_df(b, ~as.data.frame(.x), .id="id")
+```
 
-if (dim(ans)[1] > 0) {
-  pp <- ggplot(ans) + geom_line(aes(x = rt, y=int, color=filename)) +
-  facet_wrap(~ id, scales = "free_y", ncol = 1) +
-  labs(x="Retention time (min)", y="Intensity", color="File name: ") +
-  theme(legend.position="top") +
-  theme_bw()
-ggplotly(pp)
-} else {
+You can also embed plots, for example:
+
+```{r echo = FALSE, out.width = "100%"}
+if(!all(is.na(mypeaks))) {
+  # search according to mz and RT with tolerances
+  getTarget <- vector(mode = "list", length = dim(mypeaks)[1])
+  for (i in 1:dim(mypeaks)[1]){
+  getTarget[[i]] <- msdata$MS1[mz%between%pmppm(mypeaks$mz[i], myppm) & 
+                                 rt%between%c(max(mypeaks$rt[i] - myrt, minRT), min(mypeaks$rt[i] + myrt,maxRT))]
+  names(getTarget)[i] <- paste0("mz:", round(mypeaks$mz[i], 4), " RT:", round(mypeaks$rt[i], 2))
+  }
   
-  print("not found")
-}
-
+  # unlist
+  myTarget <- dplyr::bind_rows(getTarget, .id = "id")
+  # plot
+  if (nrow(myTarget) > 0) {
+    pp <- ggplot(myTarget) + 
+      geom_line(aes(x = rt, y = int, color = filename)) +
+      facet_wrap(~ id, scales = "free_y", ncol = 2) +
+      labs(x = "Retention time (min)", y = "Intensity", color = "File name: ") +
+      theme(legend.position = "top") +
+      theme_bw()
+    ggplotly(pp)
+    } else {
+      print("Peasks of interests are not found")
+    }
+} else {
+    print("Peaks of interests are not defined")
+  }
 ```
 
 ```{r}

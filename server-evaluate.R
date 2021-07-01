@@ -24,7 +24,7 @@ ppms$enable()
 
 ## 1.3 check rt tolerance range
 rts <- InputValidator$new()
-rts$add_rule("myrt", sv_between(0.01, 3))
+rts$add_rule("myrt", sv_between(0.01, 5))
 rts$enable()
 
 ## 1.4 get peaks input
@@ -50,7 +50,7 @@ observeEvent(input$evaluate, {
 
    ## 2.1 generate report button
   output$report_button <- renderUI({
-    validate(need(length(userInput()) >= 2, "Attention: at least 2 data files are required to generate the report"))
+    validate(need(length(userInput()) >= 2, "Attention: at least 2 data files are required"))
     msdata <<- RaMS::grabMSdata(files = userInput())
     downloadButton("report", "Download Report", style="color: #fff; background-color: #00b300; border-color: #009900")
     })

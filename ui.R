@@ -4,24 +4,33 @@ library(shinydashboardPlus)
 library(shinyFiles)
 library(shinyMatrix)
 library(shinyvalidate)
-library(RaMS)
-library(plotly)
 library(shinycustomloader)
+library(RaMS)
+library(data.table)
+library(dplyr)
+library(plotly)
+library(purrr)
+
 
 dashboardPage(
 
   ## Header ----------------------------------------------------------------------
-  header = dashboardHeader(),
+  header = dashboardHeader(
+    title = strong("RawHummus")
+  ),
 
   ## Sidebar ----------------------------------------------------------------------
   sidebar = dashboardSidebar(
 
     sidebarMenu(
-      menuItem(text = "Home", tabName = "home", icon = icon("home")),
-      menuItem(text = "File Conversion", tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
-      menuItem(text = "Evaluation", tabName = "evaluate", icon = icon("chart-bar"), badgeLabel = "Online"),
+      id = "sidebarmenu",
+      menuItem(text = strong("Home"), tabName = "home", icon = icon("home")),
+      menuItem(text = strong("MSConvert"), tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
+      menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("cog"), badgeLabel = "Online"),
+      menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile")),
+      menuItem(text = strong("Acknowledgement"), tabName = "acknowledgement", icon = icon("heart")),
       hr(),
-      menuItem(text = "Evaluation", tabName = "evaluate", icon = icon("chart-bar"))
+      menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("chart-bar"))
       )
     ),
 
