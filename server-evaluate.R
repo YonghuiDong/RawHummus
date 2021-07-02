@@ -64,17 +64,25 @@ output$report <- downloadHandler(
   filename <- paste0(Sys.Date(), "_Report.html"),
   content <- function(file){
 
-    tempReport <- file.path(tempdir(), "Report.Rmd")
-    file.copy("Report.Rmd", tempReport, overwrite = TRUE)
-    params <- list(msdata = msdata,
-                   mypeaks = mypeaks(),
-                   myppm = myppm(),
-                   myrt = myrt())
-    rmarkdown::render(tempReport,
-                      output_file = file,
-                      params = params,
-                      envir = new.env(parent = globalenv())
-                      )
+    shiny::withProgress(
+      message = "Generating report",
+      detail = "This may take a while...",
+      value = 0.4,
+      {
+
+        tempReport <- file.path(tempdir(), "Report.Rmd")
+        file.copy("Report.Rmd", tempReport, overwrite = TRUE)
+        params <- list(msdata = msdata,
+                       mypeaks = mypeaks(),
+                       myppm = myppm(),
+                       myrt = myrt())
+        rmarkdown::render(tempReport,
+                          output_file = file,
+                          params = params,
+                          envir = new.env(parent = globalenv()))
+
+        })
+
     }
 
 )
