@@ -1,9 +1,12 @@
+
+chartr0 <- function(x) chartr('\\','/', x)
+
 msconvertPath <- reactive({
-  return(input$msconvert)
+  return(chartr0(input$msconvert))
 })
 
 outPath <- reactive({
-  return(input$outdir)
+  return(chartr0(input$outdir))
 })
 
 volumes = getVolumes()
@@ -24,8 +27,8 @@ observe({
 
   # 4. execute conversion
   observeEvent(input$convert, {
-    for (i in 1:length(rawPath)) {
-      msconvert_command <- paste0('msconvert --mzML -gzv "', rawPath[i], '" -o "', outfilesdir, '"')
+    for (i in 1:nrow(rawPath)) {
+      msconvert_command <- - paste0('"', msconvertpath(), '"', " msconvert ", '"', rawPath()[i, ], '"', " -o ", '"', outPath(), '"')
       system(msconvert_command)
       }
     })
