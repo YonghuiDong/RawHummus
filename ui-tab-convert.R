@@ -35,8 +35,8 @@ fluidRow(
            collapsed = FALSE,
            closable = FALSE,
            textInput(inputId = "msconvert",
-                     label = "Paste msconvert.exe path here",
-                     placeholder = "C:/Program Files (x86)/ProteoWizard/ProteoWizard/msconvert.exe"),
+                     label = "Paste msconvert.exe path",
+                     placeholder = "example: C:/Program Files (x86)/ProteoWizard/ProteoWizard/msconvert.exe"),
 
            strong("Select raw data:"),
            br(),
@@ -52,8 +52,8 @@ fluidRow(
            br(),
 
            textInput(inputId = "outdir",
-                     label = "Choose directory",
-                     placeholder = "D:/Data"),
+                     label = "Paste directory path for saving converted data",
+                     placeholder = "example: D:/Data"),
 
            actionButton("convert", "Convert", icon("paper-plane"),
                         style = "color: #fff; background-color: #CD0000; border-color: #9E0000"
