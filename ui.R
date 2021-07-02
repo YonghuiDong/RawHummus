@@ -26,7 +26,7 @@ dashboardPage(
       id = "sidebarmenu",
       menuItem(text = strong("Home"), tabName = "home", icon = icon("home")),
       menuItem(text = strong("MSConvert"), tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
-      menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("cog"), badgeLabel = "Online"),
+      menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("cog")),
       menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile")),
       menuItem(text = strong("Acknowledgement"), tabName = "acknowledgement", icon = icon("heart")),
       hr(),
