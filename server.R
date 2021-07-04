@@ -8,7 +8,8 @@ shinyServer(function(input, output) {
     showModal(
       modalDialog(
         title = HTML('<p style="color:#FF6347;"><br>Attention:</br></p>'),
-        strong("MSConvert function is designed for local use only. Please read user guide for more details.")
+        strong("MSConvert function is designed for local use only. Please read user guide for more details."),
+        easyClose = TRUE
         )
       )
     })
