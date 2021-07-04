@@ -85,7 +85,7 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           htmlOutput("filesPath")
+           dataTableOutput("filesPath")
            ),
 
          box(
