@@ -10,6 +10,7 @@ library(data.table)
 library(dplyr)
 library(plotly)
 library(purrr)
+library(rmarkdown)
 
 
 dashboardPage(
