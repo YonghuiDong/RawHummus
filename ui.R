@@ -28,10 +28,9 @@ dashboardPage(
       menuItem(text = strong("Home"), tabName = "home", icon = icon("home")),
       menuItem(text = strong("MSConvert"), tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
       menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("cog")),
-      menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile")),
-      menuItem(text = strong("Acknowledgement"), tabName = "acknowledgement", icon = icon("heart")),
-      hr(),
-      menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("chart-bar"))
+      strong("hi"),
+      menuItem(text = strong("Monitor Instrument"), tabName = "monitor", icon = icon("eye")),
+      menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile"))
       )
     ),
 
@@ -40,7 +39,8 @@ dashboardPage(
     tabItems(
       tabItem(tabName = "home",  source("ui-tab-home.R", local = TRUE)$value),
       tabItem(tabName = "convert",  source("ui-tab-convert.R", local = TRUE)$value),
-      tabItem(tabName = "evaluate",  source("ui-tab-evaluate.R", local = TRUE)$value)
+      tabItem(tabName = "evaluate",  source("ui-tab-evaluate.R", local = TRUE)$value),
+      tabItem(tabName = "monitor",  source("ui-tab-monitor.R", local = TRUE)$value)
       )
     ),
 

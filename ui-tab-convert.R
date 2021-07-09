@@ -63,42 +63,53 @@ fluidRow(
 
 
   column(width = 7,
-         box(
-           width = 12,
-           inputId = "msconvert_card",
-           title = strong("MSConvert"),
-           status = "success",
-           solidHeader = FALSE,
-           collapsible = TRUE,
-           collapsed = FALSE,
-           closable = FALSE,
-           textOutput("msconvertPath")
-           ),
+         # box(
+         #    width = 12,
+         #    inputId = "msconvert_card",
+         #    title = strong("MSConvert"),
+         #    status = "success",
+         #    solidHeader = FALSE,
+         #    collapsible = TRUE,
+         #    collapsed = FALSE,
+         #    closable = FALSE,
+         #    textOutput("msconvertPath")
+         #    ),
+
+          box(
+            #loadingState(),
+            width = 12,
+            inputId = "rawData_card",
+            title = strong("Raw Data"),
+            status = "success",
+            solidHeader = FALSE,
+            collapsible = TRUE,
+            collapsed = FALSE,
+            closable = FALSE,
+            dataTableOutput("filesPath")
+            ),
+
+          # box(
+          #   width = 12,
+          #   inputId = "outDir_card",
+          #   title = strong("Converted Data"),
+          #   status = "success",
+          #   solidHeader = FALSE,
+          #   collapsible = TRUE,
+          #   collapsed = FALSE,
+          #   closable = FALSE,
+          #   textOutput("outDir")
+          # ),
 
          box(
-           #loadingState(),
            width = 12,
-           inputId = "rawData_card",
-           title = strong("Raw Data"),
+           inputId = "message_card",
+           title = strong("Conversion Status"),
            status = "success",
            solidHeader = FALSE,
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           dataTableOutput("filesPath")
-           ),
-
-         box(
-           #loadingState(),
-           width = 12,
-           inputId = "outDir_card",
-           title = strong("Converted Data"),
-           status = "success",
-           solidHeader = FALSE,
-           collapsible = TRUE,
-           collapsed = FALSE,
-           closable = FALSE,
-           textOutput("outDir")
+           shinycustomloader::withLoader(textOutput("convertMessage"), type = "html", loader = "pacman")
          )
 
          )
