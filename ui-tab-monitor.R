@@ -69,7 +69,7 @@ fluidRow(
          box(
            width = 12,
            inputId = "report_card",
-           title = "Plot",
+           title = strong("Plot"),
            status = "success",
            solidHeader = FALSE,
            collapsible = TRUE,
