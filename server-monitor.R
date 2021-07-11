@@ -17,7 +17,7 @@ userLogs <- reactive({
 
 # 2. Read files function
 read_log <- function(log) {
-  read.csv(log, header = TRUE, check.names = FALSE, skipNul = TRUE, sep = "\t", fileEncoding = "latin1")
+  read.table(log, header = TRUE, check.names = FALSE, skipNul = TRUE, sep = "\t", fileEncoding = "latin1")
 }
 
 # 3. Plots
@@ -58,7 +58,7 @@ observeEvent(input$monitor, {
             x = ~ Date,
             y = ~ get(input$selected_parameters),
             color = ~ Date,
-            colors = brewer.pal(min(max(3, nDate), 12), "Paired"), ## min =3, max = 12
+            colors =  brewer.pal(min(max(3, nDate), 12), "Paired"), ## min =3, max = 12
             type = 'scatter',
             mode = 'markers',
             size = 10,

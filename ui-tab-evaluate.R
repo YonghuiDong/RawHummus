@@ -12,14 +12,14 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           p("1. You can upload your data in", strong("Upload Data Panel"), "tab. CCWeights accepts csv, xls and xlsx formats."),
-           p("2. Your data should contain at least two columns, i.e.,", span("Concentration", style = "color:#f15c42"), "and", span("Response", style = "color:#f15c42"),
-             ". If your data contains information from more than one compounds, you need to add an additional column, named", span("Compound", style = "color:#f15c42"),
-             ". If you have internal standards in your data, you need to add a column named", span("IS", style = "color:#f15c42"), ". Note that column names
-             are case-sensitive."),
-           p("3. You can load the two example datasets in", strong("Upload Data Panel"), "tab to check the data format."),
-           p("4. You can view the data in", strong("Loaded Data"), "tab,
-             and view the summary statistics of the loaded data in", strong("Data Summary"), "."),
+           p(strong("QCviewer"), "tab enables evaluating LCMS system using QC samples"),
+           p("1. The converted QC files can be uploaded in", code("Data Input Panel"), ". Note at least two QC files are required."),
+           p("2.", strong("QCviewer"), "automatically select 6 peaks accross the retention time (RT) range in your sample to evalute the system.
+             Optionally, you could add peaks of interest in", code("2.Add peaks of interest to monitor"), "panel to monitor them
+             in your QC sample.You can set the mass accuracy (ppm) and RT windown for QCviewer to search for your peaks in",
+             code("mass accuracy tolerance"), "and", code("retention time tolerance"), "panels, respectively."),
+           p("3. You can click", code("Evaluate"), "button to start evaluation. Be patient, it may take a while for the evaluation process."),
+           p("4. Once evaluation is down, a download butotn is prompt for you to download the evaluation report."),
            p("5. You can click", strong('+'), "and", strong('-'), "in the tab to show or hide the contents in the tab.")
            )
          ),

@@ -10,15 +10,16 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           p("1. You can upload your data in", strong("Upload Data Panel"), "tab. CCWeights accepts csv, xls and xlsx formats."),
-           p("2. Your data should contain at least two columns, i.e.,", span("Concentration", style = "color:#f15c42"), "and", span("Response", style = "color:#f15c42"),
-             ". If your data contains information from more than one compounds, you need to add an additional column, named", span("Compound", style = "color:#f15c42"),
-             ". If you have internal standards in your data, you need to add a column named", span("IS", style = "color:#f15c42"), ". Note that column names
-             are case-sensitive."),
-           p("3. You can load the two example datasets in", strong("Upload Data Panel"), "tab to check the data format."),
-           p("4. You can view the data in", strong("Loaded Data"), "tab,
-             and view the summary statistics of the loaded data in", strong("Data Summary"), "."),
-           p("5. You can click", strong('+'), "and", strong('-'), "in the tab to show or hide the contents in the tab.")
+           p(strong("MSconvert"), "tab provides another option for you to convert your raw file to mzML format."),
+           p("There are few requirements for this option: ", span("(1)", style = "color:#f15c42"), "for safety reason,
+             this function only works on your local computer;", span("(2)", style = "color:#f15c42"), "You need to have msconvert.exe software installed in your computer."),
+           p("There are many different ways to convert raw files. You can refer to this page",
+             span("https://ccms-ucsd.github.io/GNPSDocumentation/fileconversion/", style = "color:#f15c42"), "for more information."),
+           p("1. To convert your files, you need to locate", span("mzconcert.exe", style = "color:#f15c42"), "software, upload",
+             span("raw data", style = "color:#f15c42"), "and select a", span("directory",  style = "color:#f15c42"),
+             "to save the concerted files in", code("File Upload Panel")),
+           p("2. Once done, you can click", code("Convert"), "button to start conversion. Be patient,
+             it may take a while for the conversion to finish.")
            )
          ),
 

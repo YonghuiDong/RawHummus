@@ -12,15 +12,16 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           p("1. You can upload your data in", strong("Upload Data Panel"), "tab. CCWeights accepts csv, xls and xlsx formats."),
-           p("2. Your data should contain at least two columns, i.e.,", span("Concentration", style = "color:#f15c42"), "and", span("Response", style = "color:#f15c42"),
-             ". If your data contains information from more than one compounds, you need to add an additional column, named", span("Compound", style = "color:#f15c42"),
-             ". If you have internal standards in your data, you need to add a column named", span("IS", style = "color:#f15c42"), ". Note that column names
-             are case-sensitive."),
-           p("3. You can load the two example datasets in", strong("Upload Data Panel"), "tab to check the data format."),
-           p("4. You can view the data in", strong("Loaded Data"), "tab,
-             and view the summary statistics of the loaded data in", strong("Data Summary"), "."),
-           p("5. You can click", strong('+'), "and", strong('-'), "in the tab to show or hide the contents in the tab.")
+           p("Log file is text file, with a .log file extension (*log), which is used to store lists of information.
+             The default directory for the log files of, i.e., Oibitrap Exactive instrument, is", span("C:\\Xcalibur\\system\\Exactive\\log.", style = "color:#f15c42")),
+           p(strong("LogViewer"), " section provides a user-friendly way to interactively view the system information."),
+
+           p("1. You can upload a single log file to monitor different instrument parameters of the day or multiple log files to compare the instrument status among different dates
+             in", code("File Inut Panel"), ", and then click", code("Monitor"), "button to view the results."),
+           p("2. There are more than 30 parameters to inspect, you can use", code("Select Parameters to View"), "panel to select the parameter of interest."),
+           p("3.", code("Plot"), "panel allows you to interactively view, compare and save the results.
+             Data point from the same day means that they were measured at different time points of the day."),
+           p("4. You can click", strong('+'), "and", strong('-'), "in the tab to show or hide the contents in the tab.")
            )
          ),
 

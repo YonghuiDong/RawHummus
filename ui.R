@@ -27,11 +27,14 @@ dashboardPage(
     sidebarMenu(
       id = "sidebarmenu",
       menuItem(text = strong("Home"), tabName = "home", icon = icon("home")),
-      menuItem(text = strong("Monitor Instrument"), tabName = "monitor", icon = icon("eye")),
+      hr(),
+      menuItem(text = strong("Logviewer"), tabName = "monitor", icon = icon("book")),
+      hr(),
       menuItem(text = strong("MSConvert"), tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
-      menuItem(text = strong("Evaluation"), tabName = "evaluate", icon = icon("cog")),
-      strong("hi"),
-      menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile"))
+      menuItem(text = strong("QCviewer"), tabName = "evaluate", icon = icon("cog")),
+      hr(),
+      menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile")),
+      menuItem(text = strong("Acknowledgements"), tabName = "acknowledgements", icon = icon("heart"))
       )
     ),
 
@@ -46,5 +49,8 @@ dashboardPage(
     ),
 
   ## Footer ----------------------------------------------------------------------
-  footer = dashboardFooter()
+  footer = dashboardFooter(
+    left = "Blavatnik Center for Drug Discovery (BCDD), Tel Aviv University",
+    right = "Copyright (C) 2021, code licensed under GPL-3.0"
+  )
 )
