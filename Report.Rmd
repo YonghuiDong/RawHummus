@@ -27,33 +27,22 @@ mypeaks <- as.data.frame(mypeaks) %>%
   filter(!is.na(mz))
 ```
 
-## Data Overview
+## 1. Data Overview
 
-Below is an interactive total ion current (TIC) plot.
+### 1.1 TIC plot
 
 ```{r, echo = FALSE, out.width = "100%"}
 plotTIC <- ggplot(msdata$TIC) + 
   geom_line(aes(x = rt, y = int, color = filename)) +
-  facet_wrap(~filename, scales = "free_y", ncol = 1) +
-  labs(x = "Retention Time (min)", y = "Intensity", color = "File name: ") +
-  theme(legend.position = "top") +
-  theme_bw()
+  facet_wrap(~ filename, scales = "free_y", ncol = 1) +
+  labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
+  theme_bw() +
+  theme(legend.position = "none")
 
 ggplotly(plotTIC)
 ```
 
-Here is the EIC
-
-```{r, echo = FALSE, out.width = "100%"}
-plotEIC <- ggplot(msdata$BPC) + 
-  geom_line(aes(x = rt, y = int, color = filename)) +
-  facet_wrap(~ filename, scales = "free_y", ncol = 1) +
-  labs(x = "Retention Time (min)", y = "Intensity", color = "File name: ") +
-  theme(legend.position = "top") +
-  theme_bw()
-
-ggplotly(plotEIC)
-```
+### 1.2 Intensity plot
 
 Below is the ion intensity plot. Dash lines represents the mean peak area ± 1.96 SD.
 
@@ -73,15 +62,11 @@ ggplotly(plotSumTIC)
 ```
 
 
-```{r cars}
-head(mypeaks)
-print(myppm)
-print(myrt)
-```
+## 2. MS1
 
-## MS1
+### 2.1 Auto Peaks Evaluation
 
-`RawHummus` automatically search for **6** peaks across the RT, and evaluate them.
+`RawHummus` automatically search for **10** peaks across the RT range, and evaluate them.
 
 ```{r echo = FALSE, out.width = "100%"}
 # get min and max RT of madata
@@ -89,7 +74,7 @@ minRT <- min(msdata$MS1$rt)
 maxRT <- max(msdata$MS1$rt)
 # get lists of peaks for evaluation
 topPeaks <- msdata$MS1 %>%
-  mutate(bins = ntile(rt, 6)) %>%
+  mutate(bins = ntile(rt, 10)) %>%
   group_by(bins) %>%
   slice_max(int, n = 1) %>%
   ungroup() %>%
@@ -105,6 +90,7 @@ for (i in 1:dim(topPeaks)[1]){
 autoTarget <- dplyr::bind_rows(autoTarget, .id = "id")
 # plot
 if (nrow(autoTarget) > 0) {
+  
     pp <- ggplot(autoTarget) + 
       geom_line(aes(x = rt, y = int, color = filename)) +
       facet_wrap(~ id, scales = "free_y", ncol = 2) +
@@ -112,28 +98,66 @@ if (nrow(autoTarget) > 0) {
       theme(legend.position = "top") +
       theme_bw()
     ggplotly(pp)
+    
     } else {
+      
       print("Peasks of interests are not found")
+      
     }
+
 
 ```
 
-You can also embed plots, for example:
+Summary of the mass accuracy and RT difference
+
+```{r, echo = FALSE, out.width = "100%"}
+
+if (nrow(autoTarget) > 0) {
+  
+ autoTargetTable <- autoTarget %>%
+  group_by(id, filename) %>%
+  slice_max(int) %>%
+  group_by(id) %>%
+  mutate(Max_RT_Difference = round(max(rt) - min(rt), 2),
+         Max_ppm_Difference = round((max(mz) - min(mz))/min(mz) * 10^6, 2)) %>%
+  mutate(Peak = id) %>%
+  ungroup() %>%
+  select(Peak, Max_ppm_Difference, Max_RT_Difference) %>%
+  distinct_all()
+
+DT::datatable(autoTargetTable) 
+  
+} else {
+  
+  print("Peasks of interests are not found")
+}
+
+```
+
+### 2.2 User defined peaks
+
+Additionally, users could inspect their peaks of interests. If these peaks were found, plots and a summary table will be given below.
 
 ```{r echo = FALSE, out.width = "100%"}
 if(!all(is.na(mypeaks))) {
+  
   # search according to mz and RT with tolerances
   getTarget <- vector(mode = "list", length = dim(mypeaks)[1])
+  
   for (i in 1:dim(mypeaks)[1]){
+    
   getTarget[[i]] <- msdata$MS1[mz%between%pmppm(mypeaks$mz[i], myppm) & 
                                  rt%between%c(max(mypeaks$rt[i] - myrt, minRT), min(mypeaks$rt[i] + myrt,maxRT))]
   names(getTarget)[i] <- paste0("mz:", round(mypeaks$mz[i], 4), " RT:", round(mypeaks$rt[i], 2))
+  
   }
   
   # unlist
   myTarget <- dplyr::bind_rows(getTarget, .id = "id")
+  
   # plot
   if (nrow(myTarget) > 0) {
+    
     pp <- ggplot(myTarget) + 
       geom_line(aes(x = rt, y = int, color = filename)) +
       facet_wrap(~ id, scales = "free_y", ncol = 2) +
@@ -141,16 +165,116 @@ if(!all(is.na(mypeaks))) {
       theme(legend.position = "top") +
       theme_bw()
     ggplotly(pp)
+    
     } else {
-      print("Peasks of interests are not found")
+      
+      myTarget <- NULL
+      print("User defined peaks are not found")
+      
     }
 } else {
-    print("Peaks of interests are not defined")
+  
+  myTarget <- NULL
+  print("User defined peaks are not found")
+  
   }
 ```
 
-```{r}
-head(mypeaks)
+
+```{r, echo = FALSE, out.width = "100%"}
+
+if (!is.null(myTarget)) {
+  
+ myTargetTable <- myTarget %>%
+  group_by(id, filename) %>%
+  slice_max(int) %>%
+  group_by(id) %>%
+  mutate(Max_RT_Difference = round(max(rt) - min(rt), 2),
+         Max_ppm_Difference = round((max(mz) - min(mz))/min(mz) * 10^6, 2)) %>%
+  mutate(Peak = id) %>%
+  ungroup() %>%
+  select(Peak, Max_ppm_Difference, Max_RT_Difference) %>%
+  distinct_all()
+
+DT::datatable(myTargetTable) 
+  
+} else {
+  
+  print("User defined peaks are not found")
+}
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## MS2
+
+### Number of Triggered MS/MS Event
+
+```{r, echo = FALSE}
+
+if(is.null(msdata$MS2)){
+  
+  print("MS2 data not found")
+  getMS2 <- NULL
+  MS2_mz <- NULL
+  MS2_RT <- NULL
+  
+} else {
+  
+  getMS2 <- msdata$MS2 %>% 
+    group_by(filename) %>%
+    summarise(MS2_Events = n_distinct(premz))
+  
+  MS2unique <- msdata$MS2 %>%
+  distinct(rt, premz, voltage, filename)
+  
+  MS2_mz <- ggplot(MS2unique, aes(premz)) +
+    geom_density(aes(fill = filename), alpha = 0.3) +
+    facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+    theme_bw()
+  
+  
+  MS2_RT <- ggplot(MS2unique, aes(rt, fill = filename)) +
+    geom_density(alpha = 0.3) +
+    facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+    theme_bw()
+  
+}
+```
+
+```{r, echo = FALSE, out.width = "100%"}
+
+DT::datatable(getMS2)
+
+```
+ 
+### Precursor Distribution accross mass range
+```{r, echo = FALSE, out.width = "100%"}
+
+if(!is.null(MS2_mz)){
+ 
+   MS2_mz 
+  
+} else {
+  
+  print("not exist")
+  
+}
+
+```
+
+### Precursor Distribution accross RT
+```{r, echo = FALSE, out.width = "100%"}
+
+if(!is.null(MS2_RT)){
+ 
+   MS2_RT
+  
+} else {
+  
+  print("not exist")
+  
+}
+
+```
+
+
