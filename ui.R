@@ -14,6 +14,9 @@ library(purrr)
 library(rmarkdown)
 library(DT)
 
+gc()
+memory.limit(9999999999)
+
 
 dashboardPage(
 
