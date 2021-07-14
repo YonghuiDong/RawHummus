@@ -17,15 +17,25 @@ userInput <- reactive({
 
 })
 
-## 1.2 check ppm range
+## 1.2 check noise range
+noises <- InputValidator$new()
+noises$add_rule("mynoise", sv_between(0, 10000000))
+noises$enable()
+
+## 1.3 check ppm range
 ppms <- InputValidator$new()
 ppms$add_rule("myppm", sv_between(1, 100))
 ppms$enable()
 
-## 1.3 check rt tolerance range
+## 1.4 check rt tolerance range
 rts <- InputValidator$new()
 rts$add_rule("myrt", sv_between(0.01, 5))
 rts$enable()
+
+## 1.5 get noise input
+mynoise <- reactive({
+  return(input$mynoise)
+})
 
 ## 1.4 get peaks input
 mypeaks <- reactive({
@@ -51,7 +61,7 @@ observeEvent(input$evaluate, {
    ## 2.1 generate report button
   output$report_button <- renderUI({
     validate(need(length(userInput()) >= 2, "Attention: at least 2 data files are required"))
-    msdata <<- RaMS::grabMSdata(files = userInput())
+    msdata <<- RaMS::grabMSdata(files = userInput(), grab_what = c("MS1", "MS2", "TIC"))
     downloadButton("report", "Download Report", style="color: #fff; background-color: #00b300; border-color: #009900")
     })
 
@@ -73,6 +83,7 @@ output$report <- downloadHandler(
         tempReport <- file.path(tempdir(), "Report.Rmd")
         file.copy("Report.Rmd", tempReport, overwrite = TRUE)
         params <- list(msdata = msdata,
+                       mynoise = mynoise(),
                        mypeaks = mypeaks(),
                        myppm = myppm(),
                        myrt = myrt())
