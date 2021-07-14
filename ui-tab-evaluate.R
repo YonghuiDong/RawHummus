@@ -16,7 +16,8 @@ fluidRow(
            p("1. The converted QC files can be uploaded in", code("Data Input Panel"), ". Note at least two QC files are required."),
            p("2.", strong("QCviewer"), "automatically select 6 peaks accross the retention time (RT) range in your sample to evalute the system.
              Optionally, you could add peaks of interest in", code("2.Add peaks of interest to monitor"), "panel to monitor them
-             in your QC sample.You can set the mass accuracy (ppm) and RT windown for QCviewer to search for your peaks in",
+             in your QC sample. It is advised to add their RTs in the table. If the RTs are unknown, you can leave them empty.
+             You can set the mass accuracy (ppm) and RT windown for QCviewer to search for your peaks in",
              code("mass accuracy tolerance"), "and", code("retention time tolerance"), "panels, respectively."),
            p("3. You can click", code("Evaluate"), "button to start evaluation. Be patient, it may take a while for the evaluation process."),
            p("4. Once evaluation is down, a download butotn is prompt for you to download the evaluation report."),
@@ -53,7 +54,7 @@ fluidRow(
            numericInput(
              inputId = "myppm",
              label = "mass accuracy tolerance (ppm: 1-100)",
-             value = 5,
+             value = 10,
              min = 1,
              max = 100
            ),
@@ -61,7 +62,7 @@ fluidRow(
            numericInput(
              inputId = "myrt",
              label = "retention time tolerance (min: 0.01-5)",
-             value = 1,
+             value = 2,
              min = 0.1,
              max = 5
            ),
