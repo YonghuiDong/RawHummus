@@ -42,9 +42,17 @@ fluidRow(
                      multiple = TRUE,
                      accept = c(".mzML", ".mzXML")),
 
+           numericInput(
+             inputId = "mynoise",
+             label = "2. (Optional but recommended:) Estimated noise intensity level",
+             value = 1000,
+             min = 0,
+             max = 10000000
+           ),
+
            shinyMatrix::matrixInput(
              inputId = "mypeaks",
-             label = "2. Optional: Add peaks of interest to monitor",
+             label = "3. (Optional:) Add peaks of interest to monitor",
              value = m,
              rows = list(extend = TRUE, names = FALSE),
              cols = list(names = TRUE),
