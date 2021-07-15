@@ -23,7 +23,7 @@ read_log <- function(log) {
 # 3. Plots
 observeEvent(input$monitor, {
 
-  validate(need(length(userLogs()) > 0, "no files selected"))
+  shiny::validate(need(length(userLogs()) > 0, "no files selected"))
 
   ## 3.1 read files into dataframe. Use tryCatch to valid the DF.
   logDF <- tryCatch(
