@@ -1,0 +1,27 @@
+Package: RawHummus
+Type: Package
+Title: This is just a test
+Version: 0.1.0
+Author: Yonghui Dong
+Maintainer: Yonghui Dong <yonghui.dong@gmail.com>
+Description: this is a test.
+Depends: R (>= 3.5.0)
+Imports: 
+  shiny, 
+  shinydashboard, 
+  shinydashboardPlus, 
+  shinyFiles, 
+  shinyMatrix, 
+  shinyvalidate, 
+  shinycustomloader, 
+  RaMS, 
+  dplyr, 
+  plotly, 
+  RColorBrewer, 
+  purrr,
+  rmarkdown,
+  DT
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
