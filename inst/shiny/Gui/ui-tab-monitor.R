@@ -12,7 +12,7 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           p("Log file is text file, with a .log file extension (*log), which is used to store lists of information.
+           p("Log file is text file with a .log file extension (*log), which is used to store lists of information.
              The default directory for the log files of, i.e., Oibitrap Exactive instrument, is", span("C:\\Xcalibur\\system\\Exactive\\log.", style = "color:#f15c42")),
            p(strong("LogViewer"), " section provides a user-friendly way to interactively view the system information."),
 
