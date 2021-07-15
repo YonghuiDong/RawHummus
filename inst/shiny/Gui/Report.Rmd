@@ -1,0 +1,296 @@
+---
+title: "RawHumms Data Quality Control Report"
+date: '`r format(Sys.Date(), "%B, %Y")`'
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+params:
+  msdata: NA
+  mynoise: NA
+  mypeaks: NA
+  myppm: NA
+  myrt: NA
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+# get data and clean them
+msdata <- params$msdata
+mypeaks <- params$mypeaks
+mynoise <- params$mynoise
+myppm <- params$myppm
+myrt <- params$myrt
+## remove rows with m/z being NA in mypeaks and rename RT column
+mypeaks <- as.data.frame(mypeaks) %>% 
+  rename(rt = Expected_RT) %>%
+  filter(!is.na(mz))
+```
+
+## 1. Data Overview
+
+### 1.1 TIC plot
+
+Total Ion Current (TIC) chromatogram represents the summed ion intensity across the entire range of masses being detected at every point (scan) in the analysis. It generally gives an overview of your QC data. If there are significant variations among your QCs, e.g., retention time (RT) or ion intensity, you could observe them from TIC plot.
+
+```{r TIC, echo = FALSE, out.width = "100%"}
+
+plotTIC <- ggplot(msdata$TIC) + 
+  geom_line(aes(x = rt, y = int, color = filename)) +
+  facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+  labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
+  theme_bw() +
+  theme(legend.position = "none")
+
+ggplotly(plotTIC)
+
+```
+
+### 1.2 Summed TIC Plot
+
+Summed TIC plot is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire point (scan) in the analysis. 
+
+```{r sumTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
+
+sumTIC <- msdata$TIC %>%
+  group_by(filename) %>%
+  summarise(peakArea = sum(int))
+
+plotSumTIC <- ggplot(sumTIC, aes(x = filename, y = peakArea, group = 1)) +
+  geom_bar(stat = "identity", aes(fill = filename), alpha = 0.5) +
+  labs(x = "File name", y = "Summed TIC", fill = "File name") +
+  theme_bw() +
+  theme(axis.text.x = element_blank()) 
+
+ggplotly(plotSumTIC)
+
+```
+
+
+## 2. MS1
+
+### 2.1 Auto Peaks Evaluation
+
+In order to more accurately monitor the variations in mass accuracy, RT consistency and ion intensity stability, `RawHummus` automatically selects **6** peaks across the entire RT range, and use them to evaluate LCMS system.
+
+Below are the Extracted ion chromatogram (EIC) of the 6 selected ions. You can interactively view, inspect and compare them among QC samples.
+
+```{r MS1Plot, echo = FALSE, out.width = "100%"}
+
+# get lists of peaks for evaluation
+MS1Filter <- msdata$MS1 %>%
+  filter(int > mynoise) ## filter according user defined noise
+
+# get min and max RT of madata
+minRT <- min(MS1Filter$rt)
+maxRT <- max(MS1Filter$rt)
+
+topPeaks <- MS1Filter %>% 
+  mutate(bins = ntile(rt, 6)) %>%
+  group_by(bins) %>%
+  slice_max(int, n = 1) %>%
+  ungroup() %>%
+  select(rt, mz)
+
+# search in raw data
+autoTarget <- vector(mode = "list", length = dim(topPeaks)[1])
+for (i in 1:dim(topPeaks)[1]){
+  
+  autoTarget[[i]] <- MS1Filter %>%
+    filter(between(mz, pmppm(topPeaks$mz[i], myppm)[1], pmppm(topPeaks$mz[i], myppm)[2]) & 
+             between(rt, max(topPeaks$rt[i] - myrt, minRT), min(topPeaks$rt[i] + myrt, maxRT)))
+  
+  names(autoTarget)[i] <- paste0("RT: ", round(topPeaks$rt[i], 2), " mz: ", round(topPeaks$mz[i], 3))
+}
+
+# unlist
+autoTarget <- dplyr::bind_rows(autoTarget, .id = "id")
+
+# plot
+if (nrow(autoTarget) > 0) {
+    aPlot <- ggplot(autoTarget) + 
+      geom_line(aes(x = rt, y = int, color = filename)) +
+      facet_wrap(~ id, scales = "free_y", ncol = 2) +
+      labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
+      theme_bw()
+    
+    ggplotly(aPlot)
+    
+    } else {
+      print("Peasks of interests are not found")
+    }
+
+```
+
+`RawHummus` performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given. Smaller 
+
+**Max RT Diff (min)**: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency.
+
+**Max Mass Diff (ppm)**: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. 
+
+**Max Intensity Ratio**: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. 
+
+Note that the above statistics are only rough estimations from the raw data.
+
+```{r MS1Table, echo = FALSE, out.width = "100%"}
+
+if (nrow(autoTarget) > 0) {
+ autoTargetTable <- autoTarget %>%
+  group_by(id, filename) %>%
+  slice_max(int) %>%
+  group_by(id) %>%
+  mutate("Max RT Diff (min)" = round(max(rt) - min(rt), 2),
+         "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
+         "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
+  mutate(Peak = id) %>%
+  ungroup() %>%
+  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
+  distinct_all()
+ 
+DT::datatable(autoTargetTable) 
+} else {
+  print("Peasks of interests are not found")
+}
+
+```
+
+### 2.2 User defined peaks
+
+Additionally, users could add their peaks of interests for inspection and comparison. If these peaks are defined in `RawHummus` and are found in the data. Similar plots and a data summary table will be given below. Otherwise, this section will be left blank.
+
+```{r userMS1Plot, echo = FALSE, out.width = "100%"}
+
+if(!all(is.na(mypeaks))) {
+  
+  # search according to mz and RT with tolerances
+  getTarget <- vector(mode = "list", length = dim(mypeaks)[1])
+
+  for (i in 1:dim(mypeaks)[1]){
+  getTarget[[i]] <- MS1Filter[mz%between%pmppm(mypeaks$mz[i], myppm) & 
+                                 rt%between%c(max(mypeaks$rt[i] - myrt, minRT), min(mypeaks$rt[i] + myrt,maxRT))]
+  names(getTarget)[i] <- paste0(" RT: ", round(mypeaks$rt[i], 2), " mz: ", round(mypeaks$mz[i], 3))
+  
+  }
+  
+  # unlist
+  myTarget <- dplyr::bind_rows(getTarget, .id = "id")
+  
+  # plot
+  if (nrow(myTarget) > 0) {
+    uPlot <- ggplot(myTarget) + 
+      geom_line(aes(x = rt, y = int, color = filename)) +
+      facet_wrap(~ id, scales = "free_y", ncol = 2) +
+      labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
+      theme_bw()
+    
+    ggplotly(uPlot)
+    
+    } else {
+      myTarget <- NULL
+      print("User defined peaks are not found")
+    }
+} else {
+  myTarget <- NULL
+  print("User defined peaks are not found")
+}
+
+```
+
+
+```{r userMS1Table, echo = FALSE, out.width = "100%"}
+
+if (!is.null(myTarget)) {
+ myTargetTable <- myTarget %>%
+  group_by(id, filename) %>%
+  slice_max(int) %>%
+  group_by(id) %>%
+  mutate("Max RT Diff (min)" = round(max(rt) - min(rt), 2),
+         "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
+         "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
+  mutate(Peak = id) %>%
+  ungroup() %>%
+  select(Peak, "Max Mass Diff (ppm)", "Max RT Diff (min)", "Max Intensity Ratio") %>%
+  distinct_all()
+
+DT::datatable(myTargetTable) 
+  
+} else {
+  print("User defined peaks are not found")
+}
+
+```
+
+## 3. MS2
+
+MS2 is another information for inspection. If 
+
+### 3.1 Number of MS2
+
+```{r MS2, echo = FALSE}
+
+if(nrow(msdata$MS2) == 0){
+  print("MS2 data not found")
+  getMS2 <- NULL
+  MS2_mz <- NULL
+  MS2_RT <- NULL
+} else {
+  getMS2 <- msdata$MS2 %>% 
+    group_by(filename) %>%
+    summarise(MS2_Events = n_distinct(premz))
+  
+  MS2unique <- msdata$MS2 %>%
+  distinct(rt, premz, voltage, filename)
+  
+  ## plot precursor ion across mz range
+  MS2_mz <- ggplot(MS2unique, aes(premz)) +
+    geom_density(aes(fill = filename), alpha = 0.3) +
+    facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+    labs(x = "Mass Range", y = "Density", fill = "File name") +
+    theme_bw() +
+    theme(legend.position = "none")
+  
+  ## plot precursor ions across RT range
+  MS2_RT <- ggplot(MS2unique, aes(rt, fill = filename)) +
+    geom_density(alpha = 0.3) +
+    facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+    labs(x = "RT (min)", y = "Density", fill = "File name") +
+    theme_bw() +
+    theme(legend.position = "none")
+}
+
+```
+
+```{r MS2Table, echo = FALSE, out.width = "100%"}
+
+DT::datatable(getMS2)
+
+```
+ 
+### 3.2 Precursor Distribution accross mass 
+
+```{r MS2MZ, echo = FALSE, out.width = "100%"}
+
+if(!is.null(MS2_mz)){
+   MS2_mz 
+} else {
+  print("not exist")
+  
+}
+
+```
+
+### 3.3 Precursor Distribution accross RT
+
+```{r MS2RT, echo = FALSE, out.width = "100%"}
+
+if(!is.null(MS2_RT)){
+   MS2_RT
+} else {
+  print("not exist")
+}
+
+```
+
+
