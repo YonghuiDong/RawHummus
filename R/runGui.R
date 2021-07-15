@@ -1,7 +1,9 @@
 #' @title Run RawHummus Gui
 #' @description Run RawHummus Gui
 #' @author Yonghui Dong
-#' @import shiny shinydashboardPlus shinyFiles shinyMatrix shinyvalidate shinycustomloader RaMS dplyr plotly RColorBrewer purrr rmarkdown
+#' @import shiny shinydashboardPlus shinyFiles shinyMatrix shinyvalidate shinycustomloader RaMS purrr dplyr plotly RColorBrewer rmarkdown
+#' @importFrom shinydashboard sidebarMenu
+#' @importFrom DT selectCells
 #' @export
 #' @return Gui
 #' @examples
