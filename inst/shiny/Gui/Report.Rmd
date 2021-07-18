@@ -95,13 +95,13 @@ topPeaks <- MS1Filter %>%
 
 # search in raw data
 autoTarget <- vector(mode = "list", length = dim(topPeaks)[1])
+
 for (i in 1:dim(topPeaks)[1]){
-  
   autoTarget[[i]] <- MS1Filter %>%
     filter(between(mz, pmppm(topPeaks$mz[i], myppm)[1], pmppm(topPeaks$mz[i], myppm)[2]) & 
              between(rt, max(topPeaks$rt[i] - myrt, minRT), min(topPeaks$rt[i] + myrt, maxRT)))
-  
   names(autoTarget)[i] <- paste0("RT: ", round(topPeaks$rt[i], 2), " mz: ", round(topPeaks$mz[i], 3))
+  
 }
 
 # unlist
@@ -114,9 +114,7 @@ if (nrow(autoTarget) > 0) {
       facet_wrap(~ id, scales = "free_y", ncol = 2) +
       labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
       theme_bw()
-    
     ggplotly(aPlot)
-    
     } else {
       print("Peasks of interests are not found")
     }
@@ -147,7 +145,6 @@ if (nrow(autoTarget) > 0) {
   ungroup() %>%
   select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
   distinct_all()
- 
 DT::datatable(autoTargetTable) 
 } else {
   print("Peasks of interests are not found")
@@ -162,18 +159,14 @@ Additionally, users could add their peaks of interests for inspection and compar
 ```{r userMS1Plot, echo = FALSE, out.width = "100%"}
 
 if(!all(is.na(mypeaks))) {
-  
   # search according to mz and RT with tolerances
   getTarget <- vector(mode = "list", length = dim(mypeaks)[1])
-
+  
   for (i in 1:dim(mypeaks)[1]){
-    
     getTarget[[i]] <- MS1Filter %>%
     filter(between(mz, pmppm(mypeaks$mz[i], myppm)[1], pmppm(mypeaks$mz[i], myppm)[2]) & 
              between(rt, max(mypeaks$rt[i] - myrt, minRT, na.rm = TRUE), min(mypeaks$rt[i] + myrt, maxRT, na.rm = TRUE)))
-    
     names(getTarget)[i] <- paste0(" RT: ", round(mypeaks$rt[i], 2), " mz: ", round(mypeaks$mz[i], 3))
-  
   }
   
   # unlist
@@ -186,9 +179,7 @@ if(!all(is.na(mypeaks))) {
       facet_wrap(~ id, scales = "free_y", ncol = 2) +
       labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
       theme_bw()
-    
     ggplotly(uPlot)
-    
     } else {
       myTarget <- NULL
       print("User defined peaks are not found")
@@ -215,10 +206,8 @@ if (!is.null(myTarget)) {
   ungroup() %>%
   select(Peak, "Max Mass Diff (ppm)", "Max RT Diff (min)", "Max Intensity Ratio") %>%
   distinct_all()
-
-DT::datatable(myTargetTable) 
-  
-} else {
+ DT::datatable(myTargetTable) 
+ } else {
   print("User defined peaks are not found")
 }
 
