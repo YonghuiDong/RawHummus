@@ -4,7 +4,7 @@ Title: Raw Data Quality Control Tool for LC-MS System
 Version: 0.1.0
 Author: Yonghui Dong
 Maintainer: Yonghui Dong <yonghui.dong@gmail.com>
-Description: RawHummus allows to evaluate the LC–MS system performance by monitoring the key parameters in instrument log files and quality control samples within a project.
+Description: Assess LC–MS system performance by visualizing instrument log files and monitoring raw quality control samples within a project.
 Depends: R (>= 3.5.0)
 Imports: 
   shiny, 
