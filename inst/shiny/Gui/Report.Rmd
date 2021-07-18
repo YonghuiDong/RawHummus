@@ -68,7 +68,6 @@ ggplotly(plotSumTIC)
 
 ```
 
-
 ## 2. MS1
 
 ### 2.1 Auto Peaks Evaluation
