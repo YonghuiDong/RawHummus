@@ -52,7 +52,7 @@ fluidRow(
 
            textInput(inputId = "outdir",
                      label = "Paste directory path for saving converted data",
-                     value = "example: C:/Users/BCDDNB3/Downloads"),
+                     value = "Example: C:/Users/BCDDNB3/Downloads"),
 
            actionButton("convert", "Convert", icon("paper-plane"),
                         style = "color: #fff; background-color: #CD0000; border-color: #9E0000"

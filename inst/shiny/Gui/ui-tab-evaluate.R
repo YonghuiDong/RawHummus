@@ -20,7 +20,7 @@ fluidRow(
              You can set the mass accuracy (ppm) and RT windown for QCviewer to search for your peaks in",
              code("mass accuracy tolerance"), "and", code("retention time tolerance"), "panels, respectively."),
            p("3. You can click", code("Evaluate"), "button to start evaluation. Be patient, it may take a while for the evaluation process."),
-           p("4. Once evaluation is down, a download butotn is prompt for you to download the evaluation report."),
+           p("4. Once evaluation is done, a download butotn is prompt for you to download the evaluation report."),
            p("5. You can click", strong('+'), "and", strong('-'), "in the tab to show or hide the contents in the tab.")
            )
          ),
