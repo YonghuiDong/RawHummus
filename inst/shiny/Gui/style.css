@@ -1,0 +1,20 @@
+/* Whole document: */
+body{
+  font-size: 16px;
+}
+
+/* Quoted text  */
+blockquote{
+  background: white;
+  border-left: 0.2em solid #76D7C4;
+  font-size: 16px;
+}
+
+/* Code text  */
+
+code {
+  background: #E9F7EF;
+  color: #196F3D;
+  word-wrap: break-word;
+  font-size: 18px;
+}
