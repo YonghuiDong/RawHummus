@@ -1,4 +1,3 @@
-
 chartr0 <- function(x) chartr('\\','/', x)
 
 msconvertPath <- reactive({
@@ -19,11 +18,11 @@ observe({
   # 2. choose raw files
   shinyFiles::shinyFileChoose(input, "files", roots = volumes())
 
-    rawPath <<- shinyFiles::parseFilePaths(volumes(), input$files) # dataframe type
+  rawPath <<- shinyFiles::parseFilePaths(volumes(), input$files) # dataframe type
 
-    output$filesPath <- renderDataTable({
-      rawPath[, c(1, 2, 4)] # show only name, size and filepath
-      })
+  output$filesPath <- shiny::renderDataTable({
+    rawPath[, c(1, 2, 4)] # show only name, size and filepath
+  })
 
 })
 
