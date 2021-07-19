@@ -3,7 +3,7 @@
 #' @author Yonghui Dong
 #' @import shiny shinydashboardPlus shinyFiles shinyMatrix shinyvalidate shinycustomloader RaMS purrr dplyr plotly RColorBrewer rmarkdown
 #' @importFrom shinydashboard sidebarMenu
-#' @importFrom DT selectCells
+#' @importFrom kableExtra row_spec
 #' @export
 #' @return Gui
 #' @examples
