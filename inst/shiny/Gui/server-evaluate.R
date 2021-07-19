@@ -81,7 +81,11 @@ output$report <- downloadHandler(
       {
 
         tempReport <- file.path(tempdir(), "Report.Rmd")
+        tempCSS <- file.path(tempdir(), "style.css")
+        tempLogo <- file.path(tempdir(), "logo.png")
         file.copy("Report.Rmd", tempReport, overwrite = TRUE)
+        file.copy("style.css", tempCSS)
+        file.copy("logo.png", tempLogo)
         params <- list(msdata = msdata,
                        mynoise = mynoise(),
                        mypeaks = mypeaks(),

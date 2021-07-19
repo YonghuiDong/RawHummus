@@ -6,6 +6,7 @@ output:
     theme: flatly
     toc: true
     toc_float: true
+    css: style.css
 params:
   msdata: NA
   mynoise: NA
@@ -30,6 +31,9 @@ mypeaks <- as.data.frame(mypeaks) %>%
   filter(!is.na(mz))
 
 ```
+
+<img src = "logo.png" height = "120" style = "position: absolute; top: 20px; right: 10px;"/>
+<br>
 
 ## 1. Data Overview
 
