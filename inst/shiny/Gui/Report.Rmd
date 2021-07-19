@@ -33,6 +33,7 @@ mypeaks <- as.data.frame(mypeaks) %>%
 ```
 
 <img src = "logo.png" height = "120" style = "position: absolute; top: 20px; right: 10px;"/>
+
 <br>
 
 ## 1. Data Overview
@@ -135,7 +136,7 @@ if (nrow(autoTarget) > 0) {
 
 **Max Intensity Ratio**: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. 
 
-Note that the above statistics are only rough estimations from the raw data.
+> Note that the above statistics are only rough estimations from the raw data.
 
 ```{r MS1Table, echo = FALSE, out.width = "100%"}
 
