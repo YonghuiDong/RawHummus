@@ -156,7 +156,7 @@ if (nrow(autoTarget) > 0) {
  
  ## DT::datatable(autoTargetTable) 
  ## use kableExtra instead of DT
- kableExtra::kbl(autoTargetTable, escape = FALSE) %>%
+ kableExtra::kbl(autoTargetTable, escape = FALSE, caption = "Table: Summary of auto-selected peaks") %>%
   kableExtra::kable_paper("hover", full_width = TRUE)
 
 } else {
@@ -227,7 +227,7 @@ if (!is.null(myTarget)) {
                                                        background = ifelse(`Max Intensity Ratio` > 3, "#FFA500", "#FFFFFF")))
 
 ## use kableExtra instead of DT 
- kableExtra::kbl(myTargetTable, escape = FALSE) %>%
+ kableExtra::kbl(myTargetTable, escape = FALSE, caption = "Table: Summary of user-defined peaks") %>%
   kableExtra::kable_paper("hover", full_width = TRUE)
  
  } else {
@@ -245,7 +245,6 @@ MS2 is another information for inspection. If
 ```{r MS2, echo = FALSE}
 
 if(nrow(msdata$MS2) == 0){
-  print("MS2 data not found")
   getMS2 <- NULL
   MS2_mz <- NULL
   MS2_RT <- NULL
@@ -278,10 +277,13 @@ if(nrow(msdata$MS2) == 0){
 
 ```{r MS2Table, echo = FALSE, out.width = "100%"}
 
-#DT::datatable(getMS2)
 ## use kableExtra instead of DT 
- kableExtra::kbl(getMS2, escape = FALSE) %>%
-  kableExtra::kable_paper("striped", full_width = TRUE)
+if(!is.null(getMS2)){
+  kableExtra::kbl(getMS2, escape = FALSE, caption = "Table: Summary of MS2 events") %>%
+    kableExtra::kable_paper("striped", full_width = TRUE)
+} else {
+  print("not exist")
+}
 
 ```
  
