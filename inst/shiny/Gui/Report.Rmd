@@ -17,6 +17,7 @@ editor_options:
 ---
 
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+
 # get data and clean them
 msdata <- params$msdata
 mypeaks <- params$mypeaks
@@ -27,6 +28,7 @@ myrt <- params$myrt
 mypeaks <- as.data.frame(mypeaks) %>% 
   rename(rt = Expected_RT) %>%
   filter(!is.na(mz))
+
 ```
 
 ## 1. Data Overview
@@ -144,8 +146,19 @@ if (nrow(autoTarget) > 0) {
   mutate(Peak = id) %>%
   ungroup() %>%
   select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
-  distinct_all()
-DT::datatable(autoTargetTable) 
+  distinct_all() %>% 
+  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
+                                                     background = ifelse(`Max RT Diff (min)` > 1, "#FFA500", "#FFFFFF")),
+         "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
+                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#FFA500", "#FFFFFF")),
+         "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
+                                                       background = ifelse(`Max Intensity Ratio` > 3, "#FFA500", "#FFFFFF")))
+ 
+ ## DT::datatable(autoTargetTable) 
+ ## use kableExtra instead of DT
+ kableExtra::kbl(autoTargetTable, escape = FALSE) %>%
+  kableExtra::kable_paper("hover", full_width = TRUE)
+
 } else {
   print("Peasks of interests are not found")
 }
@@ -204,9 +217,19 @@ if (!is.null(myTarget)) {
          "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
   mutate(Peak = id) %>%
   ungroup() %>%
-  select(Peak, "Max Mass Diff (ppm)", "Max RT Diff (min)", "Max Intensity Ratio") %>%
-  distinct_all()
- DT::datatable(myTargetTable) 
+  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
+  distinct_all() %>%
+  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
+                                                     background = ifelse(`Max RT Diff (min)` > 1, "#FFA500", "#FFFFFF")),
+         "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
+                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#FFA500", "#FFFFFF")),
+         "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
+                                                       background = ifelse(`Max Intensity Ratio` > 3, "#FFA500", "#FFFFFF")))
+
+## use kableExtra instead of DT 
+ kableExtra::kbl(myTargetTable, escape = FALSE) %>%
+  kableExtra::kable_paper("hover", full_width = TRUE)
+ 
  } else {
   print("User defined peaks are not found")
 }
@@ -255,7 +278,10 @@ if(nrow(msdata$MS2) == 0){
 
 ```{r MS2Table, echo = FALSE, out.width = "100%"}
 
-DT::datatable(getMS2)
+#DT::datatable(getMS2)
+## use kableExtra instead of DT 
+ kableExtra::kbl(getMS2, escape = FALSE) %>%
+  kableExtra::kable_paper("striped", full_width = TRUE)
 
 ```
  
