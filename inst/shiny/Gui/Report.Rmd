@@ -41,7 +41,7 @@ mypeaks <- as.data.frame(mypeaks) %>%
 
 Metabolomics studies often comprise complex biological matrices resulting in huge amounts of data. Therefor raw data needs to be inspected before data processing in order to detect any putative error sources, e.g., retention time (RT) or mass accuracy shifts. In particular, proper quality control (QC) checks (e.g., for precision, signal drifts or offsets) are necessary in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
 
-<span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and detailed illustrations that helps users evaluate their data quality and LCMS system performance.
+<span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and detailed illustrations that help users evaluate their data quality and LCMS system performance.
 
 # Data Overview
 
@@ -85,7 +85,7 @@ ggplotly(plotSumTIC)
 **Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient closer to <span style = "color: #ff8080">**1**</span> indicate high similarity and therefore good LCMS system stability.
 
 > **Note that** as the number of mass features may vary among QC samples, TIC at each scan is used to calculate Pearson correlation coefficient.
-In cases where total number of scans are different among QC samples (which is usually due to the system virations at the end of the run), samples are trimmed before calculating Pearson correlation coefficient.
+In cases where total number of scans are different among QC samples (which is usually due to the system virations at the end of the run), samples are automatically trimmed before calculating Pearson correlation coefficient.
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -103,7 +103,7 @@ if(is.data.frame(corTIC)){
   minScan <- min(map_df(corTIC, length))
   
   ## trim scans
-  corTIC2 <- map_df(corTIC, `[`, 1:minScan)
+  corTIC2 <- map_df(corTIC, `[`, 1: minScan)
   
   ## correlation table
   kableExtra::kbl(round(cor(corTIC2), 2),
@@ -175,8 +175,6 @@ if (nrow(autoTarget) > 0) {
 `Max Mass Diff (ppm)`: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. If the maximum mass variation is over <span style = "color: #ff8080">**5 ppm**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
 `Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**3**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
-
-> Note that the above statistics are only rough estimations from the raw data.
 
 ```{r MS1Table, echo = FALSE, out.width = "100%"}
 
