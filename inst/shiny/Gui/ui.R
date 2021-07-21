@@ -11,7 +11,7 @@ library(plotly)
 library(RColorBrewer)
 library(purrr)
 library(rmarkdown)
-library(DT)
+library(kableExtra)
 
 gc()
 memory.limit(9999999999)
