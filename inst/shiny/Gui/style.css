@@ -1,6 +1,7 @@
 /* Whole document: */
 body{
   font-size: 16px;
+  text-align: justify;
 }
 
 /* Quoted text  */
@@ -16,5 +17,4 @@ code {
   background: #E9F7EF;
   color: #196F3D;
   word-wrap: break-word;
-  font-size: 18px;
 }
