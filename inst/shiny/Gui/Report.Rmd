@@ -1,11 +1,12 @@
 ---
 title: "RawHumms Data Quality Control Report"
-date: '`r format(Sys.Date(), "%B, %Y")`'
+date: '`r format(Sys.Date(),  "%d, %B, %Y")`'
 output: 
   html_document:
     theme: flatly
     toc: true
     toc_float: true
+    number_sections: true
     css: style.css
 params:
   msdata: NA
@@ -36,28 +37,32 @@ mypeaks <- as.data.frame(mypeaks) %>%
 
 <br>
 
-## 1. Data Overview
+# Introduction
 
-### 1.1 TIC plot
+Metabolomics studies often comprise complex biological matrices resulting in huge amounts of data. Therefor raw data needs to be inspected before data processing in order to detect any putative error sources, e.g., retention time (RT) or mass accuracy shifts. In particular, proper quality control (QC) checks (e.g., for precision, signal drifts or offsets) are necessary in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
 
-Total Ion Current (TIC) chromatogram represents the summed ion intensity across the entire range of masses being detected at every point (scan) in the analysis. It generally gives an overview of your QC data. If there are significant variations among your QCs, e.g., retention time (RT) or ion intensity, you could observe them from TIC plot.
+<span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and detailed illustrations that helps users evaluate their data quality and LCMS system performance.
+
+# Data Overview
+
+## TIC plot
+
+`Total Ion Current (TIC)` chromatogram represents the summed ion intensity across each scan in the analysis. **The interactive overlaid TIC plot** can be used for rapid inspection of retention time (RT) and ion intensity fluctuations.
 
 ```{r TIC, echo = FALSE, out.width = "100%"}
 
 plotTIC <- ggplot(msdata$TIC) + 
   geom_line(aes(x = rt, y = int, color = filename)) +
-  facet_wrap(~ filename, scales = "free_y", ncol = 2) +
   labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
-  theme_bw() +
-  theme(legend.position = "none")
+  theme_bw()
 
 ggplotly(plotTIC)
 
 ```
 
-### 1.2 Summed TIC Plot
+## Summed TIC Plot
 
-Summed TIC plot is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire point (scan) in the analysis. 
+**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire point (scan) in the analysis. 
 
 ```{r sumTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -75,11 +80,46 @@ ggplotly(plotSumTIC)
 
 ```
 
-## 2. MS1
+## QC Correlation Analysis
 
-### 2.1 Auto Peaks Evaluation
+**Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient closer to <span style = "color: #ff8080">**1**</span> indicate high similarity and therefore good LCMS system stability.
 
-In order to more accurately monitor the variations in mass accuracy, RT consistency and ion intensity stability, `RawHummus` automatically selects **6** peaks across the entire RT range, and use them to evaluate LCMS system.
+> **Note that** as the number of mass features may vary among QC samples, TIC at each scan is used to calculate Pearson correlation coefficient.
+In cases where total number of scans are different among QC samples (which is usually due to the system virations at the end of the run), samples are trimmed before calculating Pearson correlation coefficient.
+
+```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
+
+## if scan number is the same, corTIC is dataframe, otherwise it is list
+corTIC <- msdata$TIC %>%
+  select(int, filename) %>%
+  unstack()
+
+## calculate correlation.
+if(is.data.frame(corTIC)){
+  kableExtra::kbl(round(cor(corTIC), 2), escape = FALSE, caption = "Table 1: TIC correlation")  %>%
+  kableExtra::kable_classic("hover", full_width = TRUE)
+} else {
+  ## get the minimum scan number
+  minScan <- min(map_df(corTIC, length))
+  
+  ## trim scans
+  corTIC2 <- map_df(corTIC, `[`, 1:minScan)
+  
+  ## correlation table
+  kableExtra::kbl(round(cor(corTIC2), 2),
+                  escape = FALSE, 
+                  caption = paste0("Table 1: TIC correlation (Trimmed sample with total scan number of ", minScan, ")"))  %>%
+  kableExtra::kable_classic("hover", full_width = TRUE)
+  
+}
+
+```
+
+# MS1
+
+## Auto Peaks Evaluation
+
+In order to more accurately monitor the variations in mass accuracy, RT consistency and ion intensity stability, <span style = "color : #FF8300">**RawHummus**</span> automatically selects **6** peaks across the entire RT range, and use them to evaluate LCMS system.
 
 Below are the Extracted ion chromatogram (EIC) of the 6 selected ions. You can interactively view, inspect and compare them among QC samples.
 
@@ -128,13 +168,13 @@ if (nrow(autoTarget) > 0) {
 
 ```
 
-`RawHummus` performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given. Smaller 
+<span style = "color: #FF8300">**RawHummus**</span> performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given. Smaller 
 
-**Max RT Diff (min)**: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency.
+`Max RT Diff (min)`: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency. If the maximum retention time variation is over <span style = "color: #ff8080">**1 min**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
-**Max Mass Diff (ppm)**: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. 
+`Max Mass Diff (ppm)`: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. If the maximum mass variation is over <span style = "color: #ff8080">**5 ppm**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
-**Max Intensity Ratio**: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. 
+`Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**3**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
 > Note that the above statistics are only rough estimations from the raw data.
 
@@ -153,16 +193,15 @@ if (nrow(autoTarget) > 0) {
   select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
   distinct_all() %>% 
   mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
-                                                     background = ifelse(`Max RT Diff (min)` > 1, "#FFA500", "#FFFFFF")),
+                                                     background = ifelse(`Max RT Diff (min)` > 1, "#ff8080", "#FFFFFF")),
          "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
-                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#FFA500", "#FFFFFF")),
+                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#ff8080", "#FFFFFF")),
          "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
-                                                       background = ifelse(`Max Intensity Ratio` > 3, "#FFA500", "#FFFFFF")))
+                                                       background = ifelse(`Max Intensity Ratio` > 3, "#ff8080", "#FFFFFF")))
  
- ## DT::datatable(autoTargetTable) 
  ## use kableExtra instead of DT
- kableExtra::kbl(autoTargetTable, escape = FALSE, caption = "Table: Summary of auto-selected peaks") %>%
-  kableExtra::kable_paper("hover", full_width = TRUE)
+ kableExtra::kbl(autoTargetTable, escape = FALSE, caption = "Table 2: Summary of auto-selected peaks") %>%
+  kableExtra::kable_classic("hover", full_width = TRUE)
 
 } else {
   print("Peasks of interests are not found")
@@ -170,13 +209,14 @@ if (nrow(autoTarget) > 0) {
 
 ```
 
-### 2.2 User defined peaks
+## User defined peaks
 
-Additionally, users could add their peaks of interests for inspection and comparison. If these peaks are defined in `RawHummus` and are found in the data. Similar plots and a data summary table will be given below. Otherwise, this section will be left blank.
+Additionally, users could add their peaks of interests for inspection and comparison. If these peaks are defined in <span style = "color: #FF8300">**RawHummus**</span> and are found in the data. Similar plots and a data summary table will be given below. Otherwise, this section will be left blank.
 
 ```{r userMS1Plot, echo = FALSE, out.width = "100%"}
 
 if(!all(is.na(mypeaks))) {
+  
   # search according to mz and RT with tolerances
   getTarget <- vector(mode = "list", length = dim(mypeaks)[1])
   
@@ -198,10 +238,8 @@ if(!all(is.na(mypeaks))) {
       labs(x = "RT (min)", y = "Intensity", color = "File name: ") +
       theme_bw()
     ggplotly(uPlot)
-    } else {
-      myTarget <- NULL
-      print("User defined peaks are not found")
     }
+  
 } else {
   myTarget <- NULL
   print("User defined peaks are not found")
@@ -225,27 +263,25 @@ if (!is.null(myTarget)) {
   select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
   distinct_all() %>%
   mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
-                                                     background = ifelse(`Max RT Diff (min)` > 1, "#FFA500", "#FFFFFF")),
+                                                     background = ifelse(`Max RT Diff (min)` > 1, "#ff8080", "#FFFFFF")),
          "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
-                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#FFA500", "#FFFFFF")),
+                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#ff8080", "#FFFFFF")),
          "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
-                                                       background = ifelse(`Max Intensity Ratio` > 3, "#FFA500", "#FFFFFF")))
+                                                       background = ifelse(`Max Intensity Ratio` > 3, "#ff8080", "#FFFFFF")))
 
 ## use kableExtra instead of DT 
- kableExtra::kbl(myTargetTable, escape = FALSE, caption = "Table: Summary of user-defined peaks") %>%
-  kableExtra::kable_paper("hover", full_width = TRUE)
+ kableExtra::kbl(myTargetTable, escape = FALSE, caption = "Table 3: Summary of user-defined peaks") %>%
+  kableExtra::kable_classic("hover", full_width = TRUE)
  
- } else {
-  print("User defined peaks are not found")
-}
+ }
 
 ```
 
-## 3. MS2
+# MS2
 
 MS2 is another information for inspection. If 
 
-### 3.1 Number of MS2
+## Number of MS2
 
 ```{r MS2, echo = FALSE}
 
@@ -284,15 +320,15 @@ if(nrow(msdata$MS2) == 0){
 
 ## use kableExtra instead of DT 
 if(!is.null(getMS2)){
-  kableExtra::kbl(getMS2, escape = FALSE, caption = "Table: Summary of MS2 events") %>%
-    kableExtra::kable_paper("striped", full_width = TRUE)
+  kableExtra::kbl(getMS2, escape = FALSE, caption = "Table 4: Summary of MS2 events") %>%
+    kableExtra::kable_classic("striped", full_width = TRUE)
 } else {
   print("not exist")
 }
 
 ```
  
-### 3.2 Precursor Distribution accross mass 
+## Precursor Distribution accross mass 
 
 ```{r MS2MZ, echo = FALSE, out.width = "100%"}
 
@@ -305,7 +341,7 @@ if(!is.null(MS2_mz)){
 
 ```
 
-### 3.3 Precursor Distribution accross RT
+## Precursor Distribution accross RT
 
 ```{r MS2RT, echo = FALSE, out.width = "100%"}
 
@@ -316,5 +352,12 @@ if(!is.null(MS2_RT)){
 }
 
 ```
+
+# Reference
+
+[1] Scalbert, A., Brennan, L., Fiehn, O., Hankemeier, T., Kristal, B.S., van Ommen, B., Pujos-Guillot, E., Verheij, E., Wishart, D. and Wopereis, S., 2009. Mass-spectrometry-based metabolomics: limitations and recommendations for future progress with particular focus on nutrition research. Metabolomics, 5(4), pp.435-458.
+
+[2] Begou, O., Gika, H.G., Theodoridis, G.A. and Wilson, I.D., 2018. Quality Control and Validation Issues in LC-MS Metabolomics. Methods in molecular biology (Clifton, NJ), 1738, pp.15-26.
+
 
 
