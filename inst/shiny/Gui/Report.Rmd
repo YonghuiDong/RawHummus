@@ -321,7 +321,7 @@ if(nrow(msdata$MS2) == 0){
 ## use kableExtra instead of DT 
 if(!is.null(getMS2)){
   kableExtra::kbl(getMS2, escape = FALSE, caption = "Table 4: Summary of MS2 events") %>%
-    kableExtra::kable_classic("striped", full_width = TRUE)
+    kableExtra::kable_classic("hover", full_width = TRUE)
 } else {
   print("not exist")
 }
