@@ -290,7 +290,8 @@ if(nrow(msdata$MS2) == 0){
 } else {
   getMS2 <- msdata$MS2 %>% 
     group_by(filename) %>%
-    summarise(MS2_Events = n_distinct(premz))
+    distinct(rt, premz) %>%
+    summarise("MS2 Events" = n())
   
   MS2unique <- msdata$MS2 %>%
   distinct(rt, premz, voltage, filename)
