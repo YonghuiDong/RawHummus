@@ -18,7 +18,6 @@ shinyServer(function(input, output, session) {
   ## removing variables in global environment before exiting a shiny app
   onStop(function(){
     rm(msdata, envir = .GlobalEnv)
-    gc()
     })
 
   })
