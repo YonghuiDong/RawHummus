@@ -13,9 +13,9 @@ library(purrr)
 library(rmarkdown)
 library(kableExtra)
 
+## free memory
 gc()
 memory.limit(9999999999)
-
 
 dashboardPage(
 
