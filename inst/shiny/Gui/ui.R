@@ -34,7 +34,7 @@ dashboardPage(
       menuItem(text = strong("Logviewer"), tabName = "monitor", icon = icon("book")),
       hr(),
       menuItem(text = strong("MSConvert"), tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
-      menuItem(text = strong("QCviewer"), tabName = "evaluate", icon = icon("bell-o")),
+      menuItem(text = strong("QCviewer"), tabName = "evaluate", icon = icon("bell-o"), badgeLabel = "Note"),
       hr(),
       menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile"))
       )
