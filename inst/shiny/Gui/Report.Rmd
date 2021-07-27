@@ -82,7 +82,7 @@ ggplotly(plotSumTIC)
 
 ## QC Correlation Analysis
 
-**Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient closer to <span style = "color: #ff8080">**1**</span> indicate high similarity and therefore good LCMS system stability.
+**Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) closer to <span style = "color: #ff8080">**1**</span> indicate high similarity and therefore good LCMS system stability.
 
 > **Note that** as the number of mass features may vary among QC samples, TIC at each scan is used to calculate Pearson correlation coefficient.
 In cases where total number of scans are different among QC samples (which is usually due to the system virations at the end of the run), samples are automatically trimmed before calculating Pearson correlation coefficient.
@@ -96,7 +96,7 @@ corTIC <- msdata$TIC %>%
 
 ## calculate correlation.
 if(is.data.frame(corTIC)){
-  kableExtra::kbl(round(cor(corTIC), 2), escape = FALSE, caption = "Table 1: TIC correlation")  %>%
+  kableExtra::kbl(round(cor(corTIC), 2), escape = FALSE, caption = "Table 1: Metabolic profile similarity")  %>%
   kableExtra::kable_classic("hover", full_width = TRUE)
 } else {
   ## get the minimum scan number
@@ -108,7 +108,7 @@ if(is.data.frame(corTIC)){
   ## correlation table
   kableExtra::kbl(round(cor(corTIC2), 2),
                   escape = FALSE, 
-                  caption = paste0("Table 1: TIC correlation (Trimmed sample with total scan number of ", minScan, ")"))  %>%
+                  caption = paste0("Table 1: Metabolic profile similarity (Sample trimmed to ", minScan, " TIC scans)"))  %>%
   kableExtra::kable_classic("hover", full_width = TRUE)
 }
 
@@ -167,7 +167,7 @@ if (nrow(autoTarget) > 0) {
 
 ```
 
-<span style = "color: #FF8300">**RawHummus**</span> performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given. Smaller 
+<span style = "color: #FF8300">**RawHummus**</span> performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given.
 
 `Max RT Diff (min)`: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency. If the maximum retention time variation is over <span style = "color: #ff8080">**1 min**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
@@ -209,6 +209,8 @@ if (nrow(autoTarget) > 0) {
 ## User defined peaks
 
 Additionally, users could add their peaks of interests for inspection and comparison. If these peaks are defined in <span style = "color: #FF8300">**RawHummus**</span> and are found in the data. Similar plots and a data summary table will be given below. Otherwise, this section will be left blank.
+
+> **Note that** noise peaks can be used to minitor the mass accuracy variation, but they may not work well to evalute RT and ion intensity variation.
 
 ```{r userMS1Plot, echo = FALSE, out.width = "100%"}
 
@@ -276,9 +278,14 @@ if (!is.null(myTarget)) {
 
 # MS2
 
-MS2 is another information for inspection. If 
+MS/MS fragmentation is important for metabolite identification. RawHummus is also able to identify problems with regard to fragmentation.
 
-## Number of MS2
+> **Note that** if your data files do not contain any MS/MS information, this section will be left blank.
+
+## Number of MS/MS
+
+`The number of triggered MS/MS`: is the total number of MS/MS events in the sample. Similar number of triggered MS/MS events indicates good reproducibility.
+
 
 ```{r MS2, echo = FALSE}
 
@@ -326,7 +333,7 @@ if(!is.null(getMS2)){
 
 ```
  
-## Precursor Distribution accross mass 
+## Precursor Distribution across Mass 
 
 ```{r MS2MZ, echo = FALSE, out.width = "100%"}
 
