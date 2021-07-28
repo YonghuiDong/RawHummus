@@ -6,6 +6,7 @@ library(shinyMatrix)
 library(shinyvalidate)
 library(shinycustomloader)
 library(RaMS)
+library(data.table)
 library(dplyr)
 library(plotly)
 library(RColorBrewer)
@@ -34,7 +35,7 @@ dashboardPage(
       menuItem(text = strong("Logviewer"), tabName = "monitor", icon = icon("book")),
       hr(),
       menuItem(text = strong("MSConvert"), tabName = "convert", icon = icon("sync"), badgeLabel = "Local"),
-      menuItem(text = strong("QCviewer"), tabName = "evaluate", icon = icon("bell-o"), badgeLabel = "Note"),
+      menuItem(text = strong("QCviewer"), tabName = "evaluate", icon = icon("bell-o")),
       hr(),
       menuItem(text = strong("Contact"), tabName = "contact", icon = icon("smile"))
       )
