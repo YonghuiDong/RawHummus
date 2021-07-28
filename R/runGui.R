@@ -4,6 +4,7 @@
 #' @import shiny shinydashboardPlus shinyFiles shinyMatrix shinyvalidate shinycustomloader RaMS purrr dplyr plotly RColorBrewer rmarkdown
 #' @importFrom shinydashboard sidebarMenu
 #' @importFrom kableExtra row_spec
+#' @importFrom data.table address
 #' @export
 #' @return Gui
 #' @examples
