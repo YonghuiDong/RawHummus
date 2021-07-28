@@ -13,8 +13,6 @@ fluidRow(
            collapsed = FALSE,
            closable = FALSE,
            p(strong("QCviewer"), "tab enables evaluating LCMS system using QC samples"),
-           p(strong("Note:"), "The web version of", code("RawHummus"), "is hosted on shinyapps.io with basic plan. Due the the storage and memory limit,
-             it is suggested to use this function locally in R/RStudio"),
            p("1. The converted QC files can be uploaded in", code("Data Input Panel"), ". Note at least two QC files are required."),
            p("2.", strong("QCviewer"), "automatically select 6 peaks accross the retention time (RT) range in your sample to evalute the system.
              Optionally, you could add peaks of interest in", code("2.Add peaks of interest to monitor"), "panel to monitor them
