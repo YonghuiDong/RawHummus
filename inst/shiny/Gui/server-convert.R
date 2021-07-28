@@ -33,9 +33,9 @@ observeEvent(input$convert, {
   output$convertMessage <- renderText({
 
     shiny::validate(
-      need(!is.null(msconvertPath()), 'Please add msconvert.exe software path'),
+      need(file.exists(msconvertPath()), 'MSconvert software not found! Please add correct software path'),
       need(nrow(rawPath) > 0, "Please select (correct) data for conversion"),
-      need(!is.null(outPath()), 'Please choose a directory to save converted data.')
+      need(dir.exists(outPath()), 'Directory not exist! Please choose a directory to save converted data.')
     )
 
     for (i in 1:nrow(rawPath)) {
