@@ -163,8 +163,8 @@ for (i in 1:dim(topPeaks)[1]){
 }
 
 
-# unlist
 ##############################################################################
+# unlist
 # autoTarget <- dplyr::bind_rows(autoTarget, .id = "id")
 ##############################################################################
 
@@ -195,26 +195,49 @@ if (nrow(autoTarget) > 0) {
 
 `Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**3**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
+If a peak is missing in some of your samples, <span style = "color: #ff8080">**NA**</span> values will be give in the table. You need to carefully inspect the peak so as to evaluate the reproducibility.
+
 ```{r MS1Table, echo = FALSE, out.width = "100%"}
 
 if (nrow(autoTarget) > 0) {
- autoTargetTable <- autoTarget %>%
-  group_by(id, filename) %>%
-  slice_max(int) %>%
-  group_by(id) %>%
-  mutate("Max RT Diff (min)" = round(max(rt) - min(rt), 2),
-         "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
-         "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
+  
+##############################################################################
+ # autoTargetTable <- autoTarget %>%
+ #  group_by(id, filename) %>%
+ #  slice_max(int) %>%
+ #  tidyr::complete(id, filename) %>%
+ #  group_by(id) %>%
+ #  mutate("Max RT Diff (min)" = round(max(rt) - min(rt), 2),
+ #         "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
+ #         "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
+ #  mutate(Peak = id) %>%
+ #  ungroup() %>%
+ #  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
+ #  distinct_all() %>% 
+ #  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
+ #                                                     background = ifelse(`Max RT Diff (min)` > 1, "#ff8080", "#FFFFFF")),
+ #         "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
+ #                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#ff8080", "#FFFFFF")),
+ #         "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
+ #                                                       background = ifelse(`Max Intensity Ratio` > 3, "#ff8080", "#FFFFFF")))
+##############################################################################
+  
+  ## fix bug#2
+  autoTargetTable  <- autoTarget[, .SD[which.max(int)], by = .(id, filename)] %>% 
+  ## data.table fill missing rows 
+  .[CJ(id = unique(id), filename = unique(msdata$TIC$filename)), on = c('id','filename')] %>%
+  .[, `:=`("Max RT Diff (min)" =  round(max(rt) - min(rt), 2),
+           "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
+           "Max Intensity Ratio" = round(max(int) / min(int), 2)), by = id] %>%
   mutate(Peak = id) %>%
-  ungroup() %>%
   select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
-  distinct_all() %>% 
-  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
-                                                     background = ifelse(`Max RT Diff (min)` > 1, "#ff8080", "#FFFFFF")),
+  distinct_all() %>%
+  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`, 
+                                                     background = ifelse((`Max RT Diff (min)` > 1 | is.na(`Max RT Diff (min)`)) , "#ff8080", "#FFFFFF")),
          "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
-                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#ff8080", "#FFFFFF")),
+                                                       background = ifelse((`Max Mass Diff (ppm)` > 5 | is.na(`Max Mass Diff (ppm)` )), "#ff8080", "#FFFFFF")),
          "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
-                                                       background = ifelse(`Max Intensity Ratio` > 3, "#ff8080", "#FFFFFF")))
+                                                       background = ifelse(c(`Max Intensity Ratio` > 3 | is.na(`Max Intensity Ratio`)), "#ff8080", "#FFFFFF")))
  
  ## use kableExtra instead of DT
  kableExtra::kbl(autoTargetTable, escape = FALSE, caption = "Table 2: Summary of auto-selected peaks") %>%
@@ -253,7 +276,8 @@ if(!all(is.na(mypeaks))) {
   
   ## use data.table instead of dplyr
   for (i in 1:dim(mypeaks)[1]){
-  getTarget[[i]] <- MS1Filter[mz %between% pmppm(mypeaks$mz[i]) & rt %between% c(max(mypeaks$rt[i] - myrt, minRT), min(mypeaks$rt[i] + myrt, maxRT))]
+  getTarget[[i]] <- MS1Filter[mz %between% pmppm(mypeaks$mz[i]) & 
+                                rt %between% c(max(mypeaks$rt[i] - myrt, minRT, na.rm = TRUE), min(mypeaks$rt[i] + myrt, maxRT, na.rm = TRUE))]
   names(getTarget)[i] <- paste0(" RT: ", round(mypeaks$rt[i], 2), " mz: ", round(mypeaks$mz[i], 3))
   }
   
@@ -282,23 +306,47 @@ if(!all(is.na(mypeaks))) {
 ```{r userMS1Table, echo = FALSE, out.width = "100%"}
 
 if (!is.null(myTarget)) {
- myTargetTable <- myTarget %>%
-  group_by(id, filename) %>%
-  slice_max(int) %>%
-  group_by(id) %>%
-  mutate("Max RT Diff (min)" = round(max(rt) - min(rt), 2),
-         "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
-         "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
+  
+   ##############################################################################
+  
+ # myTargetTable <- myTarget %>%
+ #  group_by(id, filename) %>%
+ #  slice_max(int) %>%
+ #  tidyr::complete(id, filename) %>%
+ #  group_by(id) %>%
+ #  mutate("Max RT Diff (min)" = round(max(rt) - min(rt), 2),
+ #         "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
+ #         "Max Intensity Ratio" = round(max(int) / min(int), 2)) %>%
+ #  mutate(Peak = id) %>%
+ #  ungroup() %>%
+ #  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
+ #  distinct_all() %>%
+ #  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
+ #                                                     background = ifelse(`Max RT Diff (min)` > 1, "#ff8080", "#FFFFFF")),
+ #         "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
+ #                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#ff8080", "#FFFFFF")),
+ #         "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
+ #                                                       background = ifelse(`Max Intensity Ratio` > 3, "#ff8080", "#FFFFFF")))
+  
+   ##############################################################################
+  
+   myTargetTable  <- myTarget[, .SD[which.max(int)], by = .(id, filename)] %>% 
+  ## data.table fill missing rows 
+  .[CJ(id = unique(id), filename = unique(msdata$MS1$filename)), on = c('id','filename')] %>%
+  .[, `:=`("Max RT Diff (min)" =  round(max(rt) - min(rt), 2),
+           "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
+           "Max Intensity Ratio" = round(max(int) / min(int), 2)), 
+    by = id] %>%
   mutate(Peak = id) %>%
-  ungroup() %>%
   select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
   distinct_all() %>%
   mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
-                                                     background = ifelse(`Max RT Diff (min)` > 1, "#ff8080", "#FFFFFF")),
+                                                     background = ifelse((`Max RT Diff (min)` > 1 | is.na(`Max RT Diff (min)`)) , "#ff8080", "#FFFFFF")),
          "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
-                                                       background = ifelse(`Max Mass Diff (ppm)` > 5, "#ff8080", "#FFFFFF")),
+                                                       background = ifelse((`Max Mass Diff (ppm)` > 5 | is.na(`Max Mass Diff (ppm)` )), "#ff8080", "#FFFFFF")),
          "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
-                                                       background = ifelse(`Max Intensity Ratio` > 3, "#ff8080", "#FFFFFF")))
+                                                       background = ifelse(c(`Max Intensity Ratio` > 3 | is.na(`Max Intensity Ratio`)), "#ff8080", "#FFFFFF")))
+ 
 
 ## use kableExtra instead of DT 
  kableExtra::kbl(myTargetTable, escape = FALSE, caption = "Table 3: Summary of user-defined peaks") %>%
@@ -316,7 +364,7 @@ MS/MS fragmentation is important for metabolite identification. RawHummus is als
 
 ## Number of MS/MS
 
-`The number of triggered MS/MS`: is the total number of MS/MS events in the sample. Similar number of triggered MS/MS events indicates good reproducibility.
+`Number of triggered MS/MS`: is the total number of MS/MS events in the sample. Similar number of triggered MS/MS events indicates good reproducibility.
 
 
 ```{r MS2, echo = FALSE}
@@ -367,6 +415,8 @@ if(!is.null(getMS2)){
  
 ## Precursor Distribution across Mass 
 
+`Precursor Distribution across Mass` plot is used to visualize the mass range proportion of fragmented precursors. 
+
 ```{r MS2MZ, echo = FALSE, out.width = "100%"}
 
 if(!is.null(MS2_mz)){
@@ -378,7 +428,14 @@ if(!is.null(MS2_mz)){
 
 ```
 
-## Precursor Distribution accross RT
+## Precursor Distribution across RT
+
+`Precursor Distribution across RT` plot is used to visualize the number of fragmented precursors at each RT (or scan). It can be useful to spot any signal dropouts during data acquisition.
+ 
+- In **data-dependent acquisition (DDA)** mode, the MS detects the abundance of mass features in MS1 and selects top N features based on intensity for fragmentation; theoretically the number of selected precursors for fragmentation at each scan (or RT) should be the same. If this mode was used for your data acquisition, you are expected to see a homogeneous precursor ions distribution across the entire RT range.
+
+- Commonly used **data-independent acquisition (DIA)** mode includes all-ion fragmentation (AIF) (e.g., MS<sup>All</sup> and MS<sup>E</sup>), where all precursors are fragmented; and sequential window acquisition of all theoretical fragment-ion spectra (SWATH), where a medium pass window, such as 20 or 25 Da, is used [3]. If this mode was used for your data acquisition, you are expected to see a continuous precursor ion distribution across the entire RT range.
+
 
 ```{r MS2RT, echo = FALSE, out.width = "100%"}
 
@@ -395,6 +452,8 @@ if(!is.null(MS2_RT)){
 [1] Scalbert, A., Brennan, L., Fiehn, O., Hankemeier, T., Kristal, B.S., van Ommen, B., Pujos-Guillot, E., Verheij, E., Wishart, D. and Wopereis, S., 2009. Mass-spectrometry-based metabolomics: limitations and recommendations for future progress with particular focus on nutrition research. Metabolomics, 5(4), pp.435-458.
 
 [2] Begou, O., Gika, H.G., Theodoridis, G.A. and Wilson, I.D., 2018. Quality Control and Validation Issues in LC-MS Metabolomics. Methods in molecular biology (Clifton, NJ), 1738, pp.15-26.
+
+[3] Guo, J., & Huan, T., 2020. Comparison of full-scan, data-dependent, and data-independent acquisition modes in liquid chromatography–mass spectrometry based untargeted metabolomics. Analytical chemistry, 92(12), pp.8072-8080.
 
 
 
