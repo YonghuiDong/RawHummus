@@ -39,9 +39,9 @@ mypeaks <- as.data.frame(mypeaks) %>%
 
 # Introduction
 
-Metabolomics studies often comprise complex biological matrices resulting in huge amounts of data. Therefor raw data needs to be inspected before data processing in order to detect any putative error sources, e.g., retention time (RT) or mass accuracy shifts. In particular, proper quality control (QC) checks (e.g., for precision, signal drifts or offsets) are necessary in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
+Metabolomics studies often comprise complex biological matrices resulting in huge amounts of data. Therefor raw data needs to be inspected before data processing in order to detect any putative error sources, e.g., retention time (RT) or mass accuracy shifts. In particular, proper quality control (QC) checks are of paramount importance in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
 
-<span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and detailed illustrations that help users evaluate their data quality and LCMS system performance.
+<span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and illustrations that help users evaluate their data quality and LCMS system performance.
 
 # Data Overview
 
@@ -62,7 +62,7 @@ ggplotly(plotTIC)
 
 ## Summed TIC Plot
 
-**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire point (scan) in the analysis. 
+**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire points (scans) from the analysis. 
 
 ```{r sumTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -87,7 +87,7 @@ In cases where total number of scans are different among QC samples (which is us
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
-## if scan number is the same, corTIC is dataframe, otherwise it is list
+## if scan number is the same, corTIC is a dataframe, otherwise it is a list
 corTIC <- msdata$TIC %>%
   select(int, filename) %>%
   unstack()
@@ -116,7 +116,7 @@ if(is.data.frame(corTIC)){
 
 ## Auto Peaks Evaluation
 
-In order to more accurately monitor variations in mass, RT and ion intensity, <span style = "color : #FF8300">**RawHummus**</span> automatically selects **6** peaks across the entire RT range, and use them to evaluate LCMS system.
+In order to accurately monitor variations in mass, RT and ion intensity, <span style = "color : #FF8300">**RawHummus**</span> automatically selects **6** peaks across the entire RT range, and use them to evaluate LCMS system.
 
 Below are the Extracted ion chromatogram (EIC) of the 6 selected ions. You can interactively view, inspect and compare them among different QC samples.
 
