@@ -12,5 +12,4 @@ install.packages('RawHummus')
 
 ```
 RawHummus::runGui()
-
 ```
