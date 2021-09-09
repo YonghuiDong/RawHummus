@@ -43,7 +43,7 @@ Metabolomics studies often comprise complex biological matrices resulting in hug
 
 <span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and illustrations that help users evaluate their data quality and LCMS system performance.
 
-# Data Overview
+# Chromatogram Overview
 
 ## TIC plot
 
@@ -193,9 +193,11 @@ if (nrow(autoTarget) > 0) {
 
 `Max Mass Diff (ppm)`: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. If the maximum mass variation is over <span style = "color: #ff8080">**5 ppm**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
-`Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**3**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
+`Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**2**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
 If a peak is missing in some of your samples, <span style = "color: #ff8080">**NA**</span> values will be give in the table. You need to carefully inspect the peak so as to evaluate the reproducibility.
+
+`Intensity CV (%)`: is the ion intensity coefficient of variation (also termed as relative standard deviation, STD). Smaller value indicates better ion intensity consistency. If the intensity CV is over <span style = "color: #ff8080">**30%**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
 
 ```{r MS1Table, echo = FALSE, out.width = "100%"}
 
@@ -228,16 +230,19 @@ if (nrow(autoTarget) > 0) {
   .[CJ(id = unique(id), filename = unique(msdata$TIC$filename)), on = c('id','filename')] %>%
   .[, `:=`("Max RT Diff (min)" =  round(max(rt) - min(rt), 2),
            "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
-           "Max Intensity Ratio" = round(max(int) / min(int), 2)), by = id] %>%
+           "Max Intensity Ratio" = round(max(int) / min(int), 2),
+           "Intensity CV (%)" = round(sd(int)/mean(int) * 100, 2)), by = id] %>%
   mutate(Peak = id) %>%
-  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
+  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio", "Intensity CV (%)") %>%
   distinct_all() %>%
   mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`, 
                                                      background = ifelse((`Max RT Diff (min)` > 1 | is.na(`Max RT Diff (min)`)) , "#ff8080", "#FFFFFF")),
          "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
                                                        background = ifelse((`Max Mass Diff (ppm)` > 5 | is.na(`Max Mass Diff (ppm)` )), "#ff8080", "#FFFFFF")),
          "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
-                                                       background = ifelse(c(`Max Intensity Ratio` > 3 | is.na(`Max Intensity Ratio`)), "#ff8080", "#FFFFFF")))
+                                                       background = ifelse(c(`Max Intensity Ratio` > 2 | is.na(`Max Intensity Ratio`)), "#ff8080", "#FFFFFF")),
+         "Intensity CV (%)" = kableExtra::cell_spec(`Intensity CV (%)`, 
+                                                       background = ifelse(c(`Intensity CV (%)` > 30 | is.na(`Intensity CV (%)`)), "#ff8080", "#FFFFFF")))
  
  ## use kableExtra instead of DT
  kableExtra::kbl(autoTargetTable, escape = FALSE, caption = "Table 2: Summary of auto-selected peaks") %>%
@@ -362,7 +367,7 @@ MS/MS fragmentation is important for metabolite identification. RawHummus is als
 
 > **Note that** if your data files do not contain any MS/MS information, this section will be left blank.
 
-## Number of MS/MS
+## Number of MS2 Events
 
 `Number of triggered MS/MS`: is the total number of MS/MS events in the sample. Similar number of triggered MS/MS events indicates good reproducibility.
 
@@ -413,7 +418,7 @@ if(!is.null(getMS2)){
 
 ```
  
-## Precursor Distribution across Mass 
+## Precursor Distribution across Mass Range
 
 `Precursor Distribution across Mass` plot is used to visualize the mass range proportion of fragmented precursors. 
 
