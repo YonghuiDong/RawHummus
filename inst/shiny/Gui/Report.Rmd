@@ -87,15 +87,11 @@ In cases where total number of scans are different among QC samples (which is us
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
-## if scan number is the same, corTIC is a dataframe, otherwise it is a list
-# corTIC <- msdata$TIC %>%
-#   filter(rt >= 0.5) %>% # trim first 0.5 min to avoid unequal scans at the beginning
-#   select(int, filename) %>%
-#   unstack()
+## if scan No. is the same, corTIC is a DF, otherwise it is a list (this case is not common after RT binning)
 
 corTIC <- msdata$TIC %>%
-  filter(rt >= 0.5) %>%
-  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.1))) %>% # bin RT 0.1 min
+  filter(rt >= 0.5) %>% # trim first 0.5 min to avoid unequal scans at the beginning
+  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.05))) %>% # bin RT 0.05 min, it is important to bin raw data
   group_by(rt_bins, filename) %>%
   mutate(int2 = sum(int), rt2 = mean(rt)) %>%
   ungroup() %>%
@@ -399,21 +395,44 @@ if(nrow(msdata$MS2) == 0){
   MS2unique <- msdata$MS2 %>%
   distinct(rt, premz, voltage, filename)
   
-  ## plot precursor ion across mz range
-  MS2_mz <- ggplot(MS2unique, aes(premz)) +
-    geom_density(aes(fill = filename), alpha = 0.3) +
-    facet_wrap(~ filename, scales = "free_y", ncol = 2) +
-    labs(x = "Mass Range", y = "Density", fill = "File name") +
-    theme_bw() +
-    theme(legend.position = "none")
+  ## plot precursor ion across mz range. Split subplot for better visulization for large data files.
+  # MS2_mz <- ggplot(MS2unique, aes(premz)) +
+  #   geom_density(aes(fill = filename), alpha = 0.3) +
+  #   facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+  #   labs(x = "Mass Range", y = "Density", fill = "File name") +
+  #   theme_bw() +
+  #   theme(legend.position = "none")
   
-  ## plot precursor ions across RT range
-  MS2_RT <- ggplot(MS2unique, aes(rt, fill = filename)) +
-    geom_density(alpha = 0.3) +
-    facet_wrap(~ filename, scales = "free_y", ncol = 2) +
-    labs(x = "RT (min)", y = "Density", fill = "File name") +
-    theme_bw() +
-    theme(legend.position = "none")
+  ## here nsub is used to better split the plot
+  nfile <- length(levels(as.factor(MS2unique$filename)))
+  nsub <- ifelse(nfile <= 8, 8, ifelse(ceiling(nfile/2) < 8, ceiling(nfile/2), 8))
+
+  MS2_mz <- MS2unique %>% 
+  split(ceiling(group_indices(., filename)/nsub)) %>% 
+  map(~ggplot(., aes(premz)) +
+        geom_density(aes(fill = filename), alpha = 0.3) +
+        facet_wrap(~ filename, scales = "free_y", ncol = 2) + 
+        labs(x = "Mass Range", y = "Density", fill = "File name") +
+        theme_bw() +
+        theme(legend.position = "none"))
+  
+  ## plot precursor ions across RT range. Split subplot for better visulization for large data files.
+  # MS2_RT <- ggplot(MS2unique, aes(rt, fill = filename)) +
+  #   geom_density(alpha = 0.3) +
+  #   facet_wrap(~ filename, scales = "free_y", ncol = 2) +
+  #   labs(x = "RT (min)", y = "Density", fill = "File name") +
+  #   theme_bw() +
+  #   theme(legend.position = "none")
+  
+  MS2_RT <- MS2unique %>% 
+  split(ceiling(group_indices(., filename)/nsub)) %>% 
+  map(~ggplot(., aes(rt, fill = filename)) +
+        geom_density(alpha = 0.3) +
+        facet_wrap(~ filename, scales = "free_y", ncol = 2) + 
+        labs(x = "RT (min)", y = "Density", fill = "File name") +
+        theme_bw() +
+        theme(legend.position = "none"))
+  
 }
 
 ```
