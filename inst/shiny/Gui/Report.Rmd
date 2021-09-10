@@ -39,7 +39,7 @@ mypeaks <- as.data.frame(mypeaks) %>%
 
 # Introduction
 
-Metabolomics studies often comprise complex biological matrices resulting in huge amounts of data. Therefor raw data needs to be inspected before data processing in order to detect any putative error sources, e.g., retention time (RT) or mass accuracy shifts. In particular, proper quality control (QC) checks are of paramount importance in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
+Robust and reproducible data is essential to ensure confidence in analytical results and is particularly important for large-scale metabolomics studies. Therefor raw data need to be inspected before data processing and statistical analysis in order to detect measurement bias and verify system consistency. In particular, proper quality control (QC) checks are of paramount importance in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
 
 <span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and illustrations that help users evaluate their data quality and LCMS system performance.
 
@@ -88,8 +88,20 @@ In cases where total number of scans are different among QC samples (which is us
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
 ## if scan number is the same, corTIC is a dataframe, otherwise it is a list
+# corTIC <- msdata$TIC %>%
+#   filter(rt >= 0.5) %>% # trim first 0.5 min to avoid unequal scans at the beginning
+#   select(int, filename) %>%
+#   unstack()
+
 corTIC <- msdata$TIC %>%
-  select(int, filename) %>%
+  filter(rt >= 0.5) %>%
+  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.1))) %>% # bin RT 0.1 min
+  group_by(rt_bins, filename) %>%
+  mutate(int2 = sum(int), rt2 = mean(rt)) %>%
+  ungroup() %>%
+  select(filename, int2, rt2) %>%
+  distinct_all() %>%
+  select(int2, filename) %>%
   unstack()
 
 ## calculate correlation.
@@ -189,15 +201,15 @@ if (nrow(autoTarget) > 0) {
 
 <span style = "color: #FF8300">**RawHummus**</span> performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given.
 
-`Max RT Diff (min)`: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency. If the maximum retention time variation is over <span style = "color: #ff8080">**1 min**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
+`Max RT Diff (min)`: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency. If the maximum retention time variation is over <span style = "color: #ff8080">**1 min**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2. 
 
-`Max Mass Diff (ppm)`: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. If the maximum mass variation is over <span style = "color: #ff8080">**5 ppm**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
+`Max Mass Diff (ppm)`: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. If the maximum mass variation is over <span style = "color: #ff8080">**5 ppm**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2.
 
-`Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**2**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
+`Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**2**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2.
 
 If a peak is missing in some of your samples, <span style = "color: #ff8080">**NA**</span> values will be give in the table. You need to carefully inspect the peak so as to evaluate the reproducibility.
 
-`Intensity CV (%)`: is the ion intensity coefficient of variation (also termed as relative standard deviation, STD). Smaller value indicates better ion intensity consistency. If the intensity CV is over <span style = "color: #ff8080">**30%**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1.
+`Intensity CV (%)`: is the ion intensity coefficient of variation (also termed as relative standard deviation, STD). Smaller value indicates better ion intensity consistency. If the intensity CV is over <span style = "color: #ff8080">**30%**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2.
 
 ```{r MS1Table, echo = FALSE, out.width = "100%"}
 
