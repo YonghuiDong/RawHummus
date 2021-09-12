@@ -43,7 +43,7 @@ Robust and reproducible data is essential to ensure confidence in analytical res
 
 <span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and illustrations that help users evaluate their data quality and LCMS system performance.
 
-# Chromatogram Overview
+# Chromatogram
 
 ## TIC plot
 
@@ -78,12 +78,9 @@ ggplotly(plotSumTIC)
 
 ```
 
-## QC Correlation Analysis
+## TIC Correlation Analysis
 
 **Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) closer to <span style = "color: #ff8080">**1**</span> indicate high similarity and therefore good LCMS system stability.
-
-> **Note that** as the number of mass features may vary among QC samples, TIC at each scan is used to calculate Pearson correlation coefficient.
-In cases where total number of scans are different among QC samples (which is usually due to the system virations at the end of the run), samples are automatically trimmed before calculating Pearson correlation coefficient.
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -201,7 +198,7 @@ if (nrow(autoTarget) > 0) {
 
 `Max Mass Diff (ppm)`: is the maximum mass variation (in ppm unit). Small values indicate good mass accuracy. If the maximum mass variation is over <span style = "color: #ff8080">**5 ppm**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2.
 
-`Max Intensity Ratio`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**2**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2.
+`Max Intensity Fold Change`: is the maximum ion intensity variation. The value closer to 1 suggests that the ion intensity is stable. If the maximum intensity ratio is over <span style = "color: #ff8080">**2**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2.
 
 If a peak is missing in some of your samples, <span style = "color: #ff8080">**NA**</span> values will be give in the table. You need to carefully inspect the peak so as to evaluate the reproducibility.
 
