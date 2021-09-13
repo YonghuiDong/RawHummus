@@ -62,17 +62,25 @@ ggplotly(plotTIC)
 
 ## Summed TIC Plot
 
-**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire points (scans) from the analysis. 
+**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire points (scans) from the analysis. Dashed red line is mean of summed TIC and blue lines represent mean + 2SD and mean - 2SD, respectively.
 
 ```{r sumTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
-sumTIC <- msdata$TIC[, list(peakArea = sum(int)), by = list(filename)]
+sumTIC <- msdata$TIC %>% 
+  group_by(filename) %>%
+  summarise(peakArea = sum(int)) %>%
+  mutate(Mean = mean(peakArea),
+         "Mean+2SD" = mean(peakArea) + 2*sd(peakArea),
+         "Mean-2SD" = mean(peakArea) - 2*sd(peakArea),)
 
 plotSumTIC <- ggplot(sumTIC, aes(x = filename, y = peakArea, group = 1)) +
   geom_bar(stat = "identity", aes(fill = filename), alpha = 0.5) +
+  geom_hline(aes(yintercept = Mean), linetype = 'dotted', colour = "red", alpha = 0.5) +
+  geom_hline(aes(yintercept = `Mean+2SD`), colour = "blue", linetype = 'dotted', alpha = 0.5) +
+  geom_hline(aes(yintercept = `Mean-2SD`), colour = "blue", linetype = 'dotted', alpha = 0.5) +
   labs(x = "File name", y = "Summed TIC", fill = "File name") +
   theme_bw() +
-  theme(axis.text.x = element_blank()) 
+  theme(axis.text.x = element_blank())
 
 ggplotly(plotSumTIC)
 
@@ -116,6 +124,9 @@ if(is.data.frame(corTIC)){
 }
 
 ```
+
+> Note that `TIC Correlation Analysis` is mainly used to evaluate peak shape similarity and RT consistency. QC files with ion intensity drift but with similar profile drift could still have good Pearson correlation coefficient.
+
 
 # MS1
 
@@ -400,9 +411,9 @@ if(nrow(msdata$MS2) == 0){
   #   theme_bw() +
   #   theme(legend.position = "none")
   
-  ## here nsub is used to better split the plot
+  ## here nsub is used to better split the plot, 8 is the max plot in one subplot
   nfile <- length(levels(as.factor(MS2unique$filename)))
-  nsub <- ifelse(nfile <= 8, 8, ifelse(ceiling(nfile/2) < 8, ceiling(nfile/2), 8))
+  nsub <- ceiling(nfile/ceiling(nfile/8))
 
   MS2_mz <- MS2unique %>% 
   split(ceiling(group_indices(., filename)/nsub)) %>% 
