@@ -125,7 +125,7 @@ if(is.data.frame(corTIC)){
 
 ```
 
-> Note that `TIC Correlation Analysis` is mainly used to evaluate peak shape similarity and RT consistency. QC files with ion intensity drift but with similar profile drift could still have good Pearson correlation coefficient.
+> Note that `TIC Correlation Analysis` is mainly used to evaluate peak shape similarity and RT consistency. QC files with ion intensity drift but similar profiles could still have good Pearson correlation coefficient.
 
 
 # MS1
