@@ -90,6 +90,8 @@ ggplotly(plotSumTIC)
 
 **Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) over **0.85** indicate high metabolic profile similarity in RT and chromatogram peak shape. If the value is below <span style = "color: #ff8080">**0.85**</span>, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
+> Note that RT were binned by 0.05 min for Pearson correlation calculation.
+
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
 ## if scan No. is the same, corTIC is a DF, otherwise it is a list (this case is not common after RT binning)
@@ -399,6 +401,8 @@ if(nrow(msdata$MS2) == 0){
   getMS2 <- NULL
   MS2_mz <- NULL
   MS2_RT <- NULL
+  TableMS2Pmass <- NULL
+  TableMS2PRT <- NULL
 } else {
   getMS2 <- msdata$MS2 %>% 
     group_by(filename) %>%
