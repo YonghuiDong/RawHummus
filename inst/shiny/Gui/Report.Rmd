@@ -90,7 +90,7 @@ ggplotly(plotSumTIC)
 
 **Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) over **0.85** indicate high metabolic profile similarity in RT and chromatogram peak shape. If the value is below <span style = "color: #ff8080">**0.85**</span>, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
-> Note that RT were binned by 0.05 min for Pearson correlation calculation.
+> Note that RT were binned by 0.1 min for Pearson correlation calculation.
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -98,7 +98,7 @@ ggplotly(plotSumTIC)
 
 corTIC <- msdata$TIC %>%
   filter(rt >= 0.5) %>% # trim first 0.5 min to avoid unequal scans at the beginning
-  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.05))) %>% # bin RT 0.05 min, it is important to bin raw data
+  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.1))) %>% # bin RT 0.1 min, it is important to bin raw data
   group_by(rt_bins, filename) %>%
   mutate(int2 = sum(int), rt2 = mean(rt)) %>%
   ungroup() %>%
@@ -194,7 +194,9 @@ for (i in 1:dim(topPeaks)[1]){
 ## unlist
 autoTarget <- data.table::rbindlist(autoTarget, idcol = T)
 data.table::setnames(autoTarget, ".id", "id") ## keep the same name as in dplyr
-  
+autoTarget <- autoTarget %>%
+  mutate(id = as.factor(id)) %>%
+  mutate(id = factor(id, levels = levels(id)[order(nchar(levels(id)))])) # order by RT, not perfect
 
 # plot
 if (nrow(autoTarget) > 0) {
@@ -395,7 +397,7 @@ MS/MS fragmentation is important for metabolite identification. RawHummus is als
 `Number of triggered MS/MS`: is the total number of MS/MS events in the sample. Similar number of triggered MS/MS events indicates good reproducibility.
 
 
-```{r MS2, echo = FALSE}
+```{r MS2, echo = FALSE, warning = FALSE}
 
 if(nrow(msdata$MS2) == 0){
   getMS2 <- NULL
