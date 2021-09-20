@@ -1,7 +1,7 @@
 Package: RawHummus
 Type: Package
 Title: Raw Data Quality Control Tool for LC-MS System
-Version: 0.1.6
+Version: 0.1.7
 Author: Yonghui Dong
 Maintainer: Yonghui Dong <yonghui.dong@gmail.com>
 Description: Assess LC–MS system performance by visualizing instrument log files and monitoring raw quality control samples within a project.
