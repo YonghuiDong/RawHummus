@@ -362,21 +362,22 @@ if (!is.null(myTarget)) {
   
    myTargetTable  <- myTarget[, .SD[which.max(int)], by = .(id, filename)] %>% 
   ## data.table fill missing rows 
-  .[CJ(id = unique(id), filename = unique(msdata$MS1$filename)), on = c('id','filename')] %>%
-  .[, `:=`("Max RT Diff (min)" =  round(max(rt) - min(rt), 2),
-           "Max Mass Diff (ppm)" = round((max(mz) - min(mz))/min(mz) * 10^6, 2),
-           "Max Intensity Ratio" = round(max(int) / min(int), 2)), 
-    by = id] %>%
-  mutate(Peak = id) %>%
-  select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio") %>%
-  distinct_all() %>%
-  mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
-                                                     background = ifelse((`Max RT Diff (min)` > 1 | is.na(`Max RT Diff (min)`)) , "#ff8080", "#FFFFFF")),
-         "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
-                                                       background = ifelse((`Max Mass Diff (ppm)` > 5 | is.na(`Max Mass Diff (ppm)` )), "#ff8080", "#FFFFFF")),
-         "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
-                                                       background = ifelse(c(`Max Intensity Ratio` > 3 | is.na(`Max Intensity Ratio`)), "#ff8080", "#FFFFFF")))
- 
+     .[CJ(id = unique(id), filename = unique(msdata$MS1$filename)), on = c('id','filename')] %>%
+     .[, `:=`("Max RT Diff (min)" =  round(max(rt) - min(rt), 2),
+              "Max Mass Diff (ppm)" = round((max(mz) - min(mz)) / min(mz) * 10^6, 2),
+              "Max Intensity Ratio" = round(max(int) / min(int), 2),
+              "Intensity CV (%)" = round(sd(int) / mean(int) * 100, 2)), by = id] %>%
+     mutate(Peak = id) %>%
+     select(Peak, "Max RT Diff (min)", "Max Mass Diff (ppm)", "Max Intensity Ratio", "Intensity CV (%)") %>%
+     distinct_all() %>%
+     mutate("Max RT Diff (min)" = kableExtra::cell_spec(`Max RT Diff (min)`,
+                                                        background = ifelse((`Max RT Diff (min)` > 1 | is.na(`Max RT Diff (min)`)) , "#ff8080", "#FFFFFF")),
+            "Max Mass Diff (ppm)" = kableExtra::cell_spec(`Max Mass Diff (ppm)`, 
+                                                        background = ifelse((`Max Mass Diff (ppm)` > 5 | is.na(`Max Mass Diff (ppm)` )), "#ff8080", "#FFFFFF")),
+            "Max Intensity Ratio" = kableExtra::cell_spec(`Max Intensity Ratio`, 
+                                                        background = ifelse(c(`Max Intensity Ratio` > 3 | is.na(`Max Intensity Ratio`)), "#ff8080", "#FFFFFF")),
+            "Intensity CV (%)" = kableExtra::cell_spec(`Intensity CV (%)`, 
+                                                        background = ifelse(c(`Intensity CV (%)` > 30 | is.na(`Intensity CV (%)`)), "#ff8080", "#FFFFFF")))
 
 ## use kableExtra instead of DT 
  kableExtra::kbl(myTargetTable, escape = FALSE, caption = "Table 3: Summary of user-defined peaks") %>%
