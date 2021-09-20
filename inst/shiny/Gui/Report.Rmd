@@ -109,7 +109,7 @@ corTIC <- msdata$TIC %>%
 
 ## calculate correlation.
 if(is.data.frame(corTIC)){
-  as.data.frame(round(cor(corTIC), 2)) %>%
+  as.data.frame(round(cor(corTIC), 3)) %>%
     dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
     kableExtra::kbl(escape = FALSE, caption = "Table 1: Metabolic profile similarity") %>%
     kableExtra::kable_classic("hover", full_width = TRUE) %>%
@@ -414,6 +414,16 @@ if(nrow(msdata$MS2) == 0){
   MS2unique <- msdata$MS2 %>%
     distinct(rt, premz, voltage, filename)
   
+  ## define cosine similarity function
+  cosSim <- function(X){
+  X2 <- as.matrix(X)
+  denom <- solve(diag(sqrt(diag(t(X2)%*%X2))))
+  Sim <- as.data.frame(denom%*%(t(X2)%*%X2)%*%denom)
+  colnames(Sim) <- colnames(X)
+  rownames(Sim) <- colnames(X)
+  return(Sim)
+  } 
+  
   ##1.1 plot precursor ion across mz range. Split subplot for better visulization for large data files.
   ## here nsub is used to better split the plot, 8 is the max plot in one subplot
   nfile <- length(levels(as.factor(MS2unique$filename)))
@@ -437,7 +447,7 @@ if(nrow(msdata$MS2) == 0){
   unstack()
   
   if(is.data.frame(corPmass)){
-  TableMS2Pmass <- as.data.frame(round(cor(corPmass), 2)) %>%
+  TableMS2Pmass <- as.data.frame(round(ccosSim(corPmass), 3)) %>%
     dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
     kableExtra::kbl(escape = FALSE, caption = "Table 5: Precursor Distribution across mass similarity") %>%
     kableExtra::kable_classic("hover", full_width = TRUE) %>%
@@ -448,7 +458,7 @@ if(nrow(msdata$MS2) == 0){
       ## trim scans
       corPmass2 <- map_df(corPmass, `[`, 1: minScan)
       ## correlation table
-      TableMS2Pmass <- as.data.frame(round(cor(corPmass2), 2)) %>%
+      TableMS2Pmass <- as.data.frame(round(cosSim(corPmass2), 3)) %>%
         dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
         kableExtra::kbl(escape = FALSE, 
                     caption = "Table 5: Precursor Distribution across mass similarity") %>%
@@ -469,14 +479,14 @@ if(nrow(msdata$MS2) == 0){
   
   ##2.2 for MS2_RT table
   corPRT <- MS2unique %>%
-  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.5))) %>% ## bin by 0.5 min
-  group_by(filename) %>%
-  count(rt_bins) %>%
-  select(n, filename) %>%
-  unstack()
+    mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.5))) %>% ## bin by 0.5 min
+    group_by(filename) %>%
+    count(rt_bins) %>%
+    select(n, filename) %>%
+    unstack()
   
   if(is.data.frame(corPRT)){
-  TableMS2PRT <- as.data.frame(round(cor(corPRT), 2)) %>%
+  TableMS2PRT <- as.data.frame(round(cosSim(corPRT), 3)) %>%
     dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
     kableExtra::kbl(escape = FALSE, caption = "Table 6: Precursor Distribution across RT similarity") %>%
     kableExtra::kable_classic("hover", full_width = TRUE) %>%
@@ -487,7 +497,7 @@ if(nrow(msdata$MS2) == 0){
       ## trim scans
       corPRT2 <- map_df(corPRT, `[`, 1: minScan)
       ## correlation table
-      TableMS2PRT <- as.data.frame(round(cor(corPRT2), 2)) %>%
+      TableMS2PRT <- as.data.frame(round(cosSim(corPRT2), 3)) %>%
         dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
         kableExtra::kbl(escape = FALSE, 
                     caption = "Table 6: Precursor Distribution across RT similarity") %>%
@@ -524,7 +534,7 @@ if(!is.null(MS2_mz)){
 
 ```
 
-Pearson correlation is used to quantify the similarity of precursor distribution across mass range plots among QC samples. Pearson correlation coefficient (R) over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 5. 
+`Cosine Similarity` is used to quantify the similarity of precursor distribution across mass range plots among QC samples. Cosine similarity over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 5. 
 
 > **Note that** precursor ions were binned by 10 Da for Pearson correlation calculation.
 
@@ -557,7 +567,7 @@ if(!is.null(MS2_RT)){
 
 ```
 
-Pearson correlation is used to quantify the similarity of precursor distribution across RT plots among QC samples. Pearson correlation coefficient (R) over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 6. 
+`Cosine Similarity` is used to quantify the similarity of precursor distribution across RT plots among QC samples. Cosine similarity over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 6. 
 
 > **Note that** RT were binned by 0.5 min for Pearson correlation calculation.
 
