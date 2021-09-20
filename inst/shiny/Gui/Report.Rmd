@@ -90,7 +90,7 @@ ggplotly(plotSumTIC)
 
 **Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) over **0.85** indicate high metabolic profile similarity in RT and chromatogram peak shape. If the value is below <span style = "color: #ff8080">**0.85**</span>, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
-> Note that RT were binned by 0.1 min for Pearson correlation calculation.
+> **Note that** RT were binned by 0.1 min for Pearson correlation calculation.
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -526,7 +526,7 @@ if(!is.null(MS2_mz)){
 
 Pearson correlation is used to quantify the similarity of precursor distribution across mass range plots among QC samples. Pearson correlation coefficient (R) over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 5. 
 
-> Note that precursor ions were binned by 10 Da for Pearson correlation calculation.
+> **Note that** precursor ions were binned by 10 Da for Pearson correlation calculation.
 
 ```{r MS2MZTable, echo = FALSE, out.width = "100%"}
 if(!is.null(TableMS2Pmass)){
@@ -559,7 +559,7 @@ if(!is.null(MS2_RT)){
 
 Pearson correlation is used to quantify the similarity of precursor distribution across RT plots among QC samples. Pearson correlation coefficient (R) over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 6. 
 
-> Note that RT were binned by 0.5 min for Pearson correlation calculation.
+> **Note that** RT were binned by 0.5 min for Pearson correlation calculation.
 
 ```{r MS2RTTable, echo = FALSE, out.width = "100%"}
 if(!is.null(TableMS2Pmass)){
