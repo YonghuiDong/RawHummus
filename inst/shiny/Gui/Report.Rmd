@@ -88,7 +88,7 @@ ggplotly(plotSumTIC)
 
 ## TIC Correlation Analysis
 
-**Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) over **0.85** indicate high metabolic profile similarity in RT and chromatogram peak shape. If the value is below <span style = "color: #ff8080">**0.85**</span>, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
+`Pearson correlation` is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) over **0.85** indicate high metabolic profile similarity in RT and chromatogram peak shape. If the value is below <span style = "color: #ff8080">**0.85**</span>, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
 > **Note that** RT were binned by 0.1 min for Pearson correlation calculation.
 
@@ -195,8 +195,8 @@ for (i in 1:dim(topPeaks)[1]){
 autoTarget <- data.table::rbindlist(autoTarget, idcol = T)
 data.table::setnames(autoTarget, ".id", "id") ## keep the same name as in dplyr
 autoTarget <- autoTarget %>%
-  mutate(id = as.factor(id)) %>%
-  mutate(id = factor(id, levels = levels(id)[order(nchar(levels(id)))])) # order by RT, not perfect
+  mutate(id = factor(id)) %>%
+  mutate(id = factor(id, levels = levels(id)[order(read.table(text = levels(id), fill = TRUE)[[2]])])) # order by RT
 
 # plot
 if (nrow(autoTarget) > 0) {
