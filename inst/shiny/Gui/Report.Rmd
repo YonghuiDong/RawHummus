@@ -88,7 +88,7 @@ ggplotly(plotSumTIC)
 
 ## TIC Correlation Analysis
 
-**Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) closer to <span style = "color: #ff8080">**1**</span> indicate high similarity and therefore good LCMS system stability.
+**Pearson correlation** is  used to quantify the metabolic profile similarity among QC samples. Pearson correlation coefficient (**R**) over **0.85** indicate high metabolic profile similarity in RT and chromatogram peak shape. If the value is below <span style = "color: #ff8080">**0.85**</span>, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 1. 
 
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -107,8 +107,11 @@ corTIC <- msdata$TIC %>%
 
 ## calculate correlation.
 if(is.data.frame(corTIC)){
-  kableExtra::kbl(round(cor(corTIC), 2), escape = FALSE, caption = "Table 1: Metabolic profile similarity")  %>%
-  kableExtra::kable_classic("hover", full_width = TRUE)
+  as.data.frame(round(cor(corTIC), 2)) %>%
+    dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+    kableExtra::kbl(escape = FALSE, caption = "Table 1: Metabolic profile similarity") %>%
+    kableExtra::kable_classic("hover", full_width = TRUE) %>%
+    kableExtra::scroll_box(width = "100%")
 } else {
   ## get the minimum scan number
   minScan <- min(map_df(corTIC, length))
@@ -117,11 +120,16 @@ if(is.data.frame(corTIC)){
   corTIC2 <- map_df(corTIC, `[`, 1: minScan)
   
   ## correlation table
-  kableExtra::kbl(round(cor(corTIC2), 2),
-                  escape = FALSE, 
-                  caption = paste0("Table 1: Metabolic profile similarity (Sample trimmed to ", minScan, " TIC scans)"))  %>%
-  kableExtra::kable_classic("hover", full_width = TRUE)
+  as.data.frame(round(cor(corTIC2), 2)) %>%
+    dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+    kableExtra::kbl(escape = FALSE, 
+                    caption = paste0("Table 1: Metabolic profile similarity (Sample trimmed to ", minScan, " TIC scans)")) %>%
+    kableExtra::kable_classic("hover", full_width = TRUE) %>%
+    kableExtra::scroll_box(width = "100%")
 }
+
+
+
 
 ```
 
