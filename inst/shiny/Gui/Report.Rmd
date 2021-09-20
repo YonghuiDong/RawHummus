@@ -110,7 +110,7 @@ corTIC <- msdata$TIC %>%
 ## calculate correlation.
 if(is.data.frame(corTIC)){
   as.data.frame(round(cor(corTIC), 3)) %>%
-    dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+    dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85, "#ff8080", "#FFFFFF"))) %>%
     kableExtra::kbl(escape = FALSE, caption = "Table 1: Metabolic profile similarity") %>%
     kableExtra::kable_classic("hover", full_width = TRUE) %>%
     kableExtra::scroll_box(width = "100%")
@@ -524,6 +524,10 @@ if(!is.null(getMS2)){
 
 `Precursor Distribution across Mass` plot is used to visualize the mass range proportion of fragmented precursors. 
 
+- It can be used to check peaks at which mass ranges are mainly fragmented.
+
+- High similarity in `Precursor Distribution across Mass` among QC samples indicates good reproducibility in MS2.
+
 ```{r MS2MZ, echo = FALSE, out.width = "100%"}
 
 if(!is.null(MS2_mz)){
@@ -552,9 +556,9 @@ if(!is.null(TableMS2Pmass)){
 
 `Precursor Distribution across RT` plot is used to visualize the number of fragmented precursors at each RT (or scan). It can be useful to spot any signal dropouts during data acquisition.
  
-- In **data-dependent acquisition (DDA)** mode, the MS detects the abundance of mass features in MS1 and selects top N features based on intensity for fragmentation; theoretically the number of selected precursors for fragmentation at each scan (or RT) should be the same. If this mode was used for your data acquisition, you are expected to see a homogeneous precursor ions distribution across the entire RT range.
+- In both **data-dependent acquisition (DDA)** and **data-independent acquisition (DIA)** mode, you are expected to see a continuous precursor ions distribution across the entire RT range.
 
-- Commonly used **data-independent acquisition (DIA)** mode includes all-ion fragmentation (AIF) (e.g., MS<sup>All</sup> and MS<sup>E</sup>), where all precursors are fragmented; and sequential window acquisition of all theoretical fragment-ion spectra (SWATH), where a medium pass window, such as 20 or 25 Da, is used [3]. If this mode was used for your data acquisition, you are expected to see a continuous precursor ion distribution across the entire RT range.
+- High similarity in `Precursor Distribution across RT` among QC samples indicates good reproducibility in MS2.
 
 
 ```{r MS2RT, echo = FALSE, out.width = "100%"}
@@ -586,5 +590,3 @@ if(!is.null(TableMS2Pmass)){
 [1] Scalbert, A., Brennan, L., Fiehn, O., Hankemeier, T., Kristal, B.S., van Ommen, B., Pujos-Guillot, E., Verheij, E., Wishart, D. and Wopereis, S., 2009. Mass-spectrometry-based metabolomics: limitations and recommendations for future progress with particular focus on nutrition research. Metabolomics, 5(4), pp.435-458.
 
 [2] Begou, O., Gika, H.G., Theodoridis, G.A. and Wilson, I.D., 2018. Quality Control and Validation Issues in LC-MS Metabolomics. Methods in molecular biology (Clifton, NJ), 1738, pp.15-26.
-
-[3] Guo, J., & Huan, T., 2020. Comparison of full-scan, data-dependent, and data-independent acquisition modes in liquid chromatography–mass spectrometry based untargeted metabolomics. Analytical chemistry, 92(12), pp.8072-8080.
