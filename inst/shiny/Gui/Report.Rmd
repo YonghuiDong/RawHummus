@@ -62,7 +62,7 @@ ggplotly(plotTIC)
 
 ## Summed TIC Plot
 
-**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire points (scans) from the analysis. Dashed red line is mean of summed TIC and blue lines represent mean + 2SD and mean - 2SD, respectively.
+**Summed TIC plot** is another quick-and-dirty way to overview global ion intensity variations among QC samples. It summed TIC across the entire points (scans) from the analysis. <span style = "color: #ff8080">**Dashed red line**</span> is **mean** of summed TIC and <span style = "color: #0579fc">**blue lines**</span> represent **mean + 2SD** and **mean - 2SD**, respectively.
 
 ```{r sumTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
@@ -127,9 +127,6 @@ if(is.data.frame(corTIC)){
     kableExtra::kable_classic("hover", full_width = TRUE) %>%
     kableExtra::scroll_box(width = "100%")
 }
-
-
-
 
 ```
 
@@ -409,16 +406,9 @@ if(nrow(msdata$MS2) == 0){
     summarise("MS2 Events" = n())
   
   MS2unique <- msdata$MS2 %>%
-  distinct(rt, premz, voltage, filename)
+    distinct(rt, premz, voltage, filename)
   
-  ## plot precursor ion across mz range. Split subplot for better visulization for large data files.
-  # MS2_mz <- ggplot(MS2unique, aes(premz)) +
-  #   geom_density(aes(fill = filename), alpha = 0.3) +
-  #   facet_wrap(~ filename, scales = "free_y", ncol = 2) +
-  #   labs(x = "Mass Range", y = "Density", fill = "File name") +
-  #   theme_bw() +
-  #   theme(legend.position = "none")
-  
+  ##1.1 plot precursor ion across mz range. Split subplot for better visulization for large data files.
   ## here nsub is used to better split the plot, 8 is the max plot in one subplot
   nfile <- length(levels(as.factor(MS2unique$filename)))
   nsub <- ceiling(nfile/ceiling(nfile/8))
@@ -432,14 +422,36 @@ if(nrow(msdata$MS2) == 0){
         theme_bw() +
         theme(legend.position = "none"))
   
-  ## plot precursor ions across RT range. Split subplot for better visulization for large data files.
-  # MS2_RT <- ggplot(MS2unique, aes(rt, fill = filename)) +
-  #   geom_density(alpha = 0.3) +
-  #   facet_wrap(~ filename, scales = "free_y", ncol = 2) +
-  #   labs(x = "RT (min)", y = "Density", fill = "File name") +
-  #   theme_bw() +
-  #   theme(legend.position = "none")
+  ##1.2 for MS2_mz table
+  corPmass <- MS2unique %>%
+  mutate(mz_bins = cut(premz, breaks = floor(max(premz)/10))) %>% ## bin by 10 Da
+  group_by(filename) %>%
+  count(mz_bins) %>%
+  select(n, filename) %>%
+  unstack()
   
+  if(is.data.frame(corPmass)){
+  TableMS2Pmass <- as.data.frame(round(cor(corPmass), 2)) %>%
+    dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+    kableExtra::kbl(escape = FALSE, caption = "Table 5: Precursor Distribution across mass similarity") %>%
+    kableExtra::kable_classic("hover", full_width = TRUE) %>%
+    kableExtra::scroll_box(width = "100%")
+    } else {
+      ## get the minimum scan number
+      minScan <- min(map_df(corPmass, length))
+      ## trim scans
+      corPmass2 <- map_df(corPmass, `[`, 1: minScan)
+      ## correlation table
+      TableMS2Pmass <- as.data.frame(round(cor(corPmass2), 2)) %>%
+        dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+        kableExtra::kbl(escape = FALSE, 
+                    caption = "Table 5: Precursor Distribution across mass similarity") %>%
+        kableExtra::kable_classic("hover", full_width = TRUE) %>%
+        kableExtra::scroll_box(width = "100%")
+      }
+
+  
+  ##2.1 plot precursor ions across RT range. Split subplot for better visulization for large data files.
   MS2_RT <- MS2unique %>% 
   split(ceiling(group_indices(., filename)/nsub)) %>% 
   map(~ggplot(., aes(rt, fill = filename)) +
@@ -449,6 +461,33 @@ if(nrow(msdata$MS2) == 0){
         theme_bw() +
         theme(legend.position = "none"))
   
+  ##2.2 for MS2_RT table
+  corPRT <- MS2unique %>%
+  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.5))) %>% ## bin by 0.5 min
+  group_by(filename) %>%
+  count(rt_bins) %>%
+  select(n, filename) %>%
+  unstack()
+  
+  if(is.data.frame(corPRT)){
+  TableMS2PRT <- as.data.frame(round(cor(corPRT), 2)) %>%
+    dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+    kableExtra::kbl(escape = FALSE, caption = "Table 6: Precursor Distribution across RT similarity") %>%
+    kableExtra::kable_classic("hover", full_width = TRUE) %>%
+    kableExtra::scroll_box(width = "100%")
+    } else {
+      ## get the minimum scan number
+      minScan <- min(map_df(corPRT, length))
+      ## trim scans
+      corPRT2 <- map_df(corPRT, `[`, 1: minScan)
+      ## correlation table
+      TableMS2PRT <- as.data.frame(round(cor(corPRT2), 2)) %>%
+        dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
+        kableExtra::kbl(escape = FALSE, 
+                    caption = "Table 6: Precursor Distribution across RT similarity") %>%
+        kableExtra::kable_classic("hover", full_width = TRUE) %>%
+        kableExtra::scroll_box(width = "100%")
+      }
 }
 
 ```
@@ -475,10 +514,23 @@ if(!is.null(MS2_mz)){
    MS2_mz 
 } else {
   print("not exist")
-  
 }
 
 ```
+
+Pearson correlation is used to quantify the similarity of precursor distribution across mass range plots among QC samples. Pearson correlation coefficient (R) over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 5. 
+
+> Note that precursor ions were binned by 10 Da for Pearson correlation calculation.
+
+```{r MS2MZTable, echo = FALSE, out.width = "100%"}
+if(!is.null(TableMS2Pmass)){
+   TableMS2Pmass 
+} else {
+  print("not exist")
+}
+
+```
+
 
 ## Precursor Distribution across RT
 
@@ -499,6 +551,20 @@ if(!is.null(MS2_RT)){
 
 ```
 
+Pearson correlation is used to quantify the similarity of precursor distribution across RT plots among QC samples. Pearson correlation coefficient (R) over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 6. 
+
+> Note that RT were binned by 0.5 min for Pearson correlation calculation.
+
+```{r MS2RTTable, echo = FALSE, out.width = "100%"}
+if(!is.null(TableMS2Pmass)){
+   TableMS2PRT
+} else {
+  print("not exist")
+}
+
+```
+
+
 # Reference
 
 [1] Scalbert, A., Brennan, L., Fiehn, O., Hankemeier, T., Kristal, B.S., van Ommen, B., Pujos-Guillot, E., Verheij, E., Wishart, D. and Wopereis, S., 2009. Mass-spectrometry-based metabolomics: limitations and recommendations for future progress with particular focus on nutrition research. Metabolomics, 5(4), pp.435-458.
@@ -506,6 +572,3 @@ if(!is.null(MS2_RT)){
 [2] Begou, O., Gika, H.G., Theodoridis, G.A. and Wilson, I.D., 2018. Quality Control and Validation Issues in LC-MS Metabolomics. Methods in molecular biology (Clifton, NJ), 1738, pp.15-26.
 
 [3] Guo, J., & Huan, T., 2020. Comparison of full-scan, data-dependent, and data-independent acquisition modes in liquid chromatography–mass spectrometry based untargeted metabolomics. Analytical chemistry, 92(12), pp.8072-8080.
-
-
-
