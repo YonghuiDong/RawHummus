@@ -212,7 +212,7 @@ if (nrow(autoTarget) > 0) {
 
 ```
 
-<span style = "color: #FF8300">**RawHummus**</span> performs a simple statistics to make the comparison simple. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference are given.
+<span style = "color: #FF8300">**RawHummus**</span> performs a simple statistics to make rapid evaluation. The table below summarized the comparison result, in which maximum RT difference, mass difference and ion intensity difference, and Intensity CV are given.
 
 `Max RT Diff (min)`: is the maximum retention time variation (in min unit). Small value indicates a good retention time consistency. If the maximum retention time variation is over <span style = "color: #ff8080">**1 min**</span>, the value will be highlight in <span style = "color: #ff8080">**red**</span> in Table 2. 
 
@@ -539,7 +539,7 @@ if(!is.null(MS2_mz)){
 
 ```
 
-`Cosine Similarity` is used to quantify the similarity of precursor distribution across mass range plots among QC samples. Cosine similarity over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 5. 
+`Cosine Similarity` is used to quantify the similarity of precursor distribution across mass range plots among QC samples. Cosine similarity over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 5. 
 
 > **Note that** precursor ions were binned by 10 Da for Pearson correlation calculation.
 
@@ -572,7 +572,7 @@ if(!is.null(MS2_RT)){
 
 ```
 
-`Cosine Similarity` is used to quantify the similarity of precursor distribution across RT plots among QC samples. Cosine similarity over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in red in Table 6. 
+`Cosine Similarity` is used to quantify the similarity of precursor distribution across RT plots among QC samples. Cosine similarity over 0.85 indicate high similarity. If the value is below 0.85, it will be highlight in <span style = "color: #ff8080">**red**</span> in Table 6. 
 
 > **Note that** RT were binned by 0.05 min for Pearson correlation calculation.
 
