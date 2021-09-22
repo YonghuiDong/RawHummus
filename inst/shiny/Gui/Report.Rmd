@@ -39,7 +39,7 @@ mypeaks <- as.data.frame(mypeaks) %>%
 
 # Introduction
 
-Robust and reproducible data is essential to ensure confidence in analytical results and is particularly important for large-scale metabolomics studies. Therefor raw data need to be inspected before data processing and statistical analysis in order to detect measurement bias and verify system consistency. In particular, proper quality control (QC) checks are of paramount importance in liquid chromatography mass spectrometry (LCMS) based metabolomics studies to ensure reliable and comparable results within experimental measurements [1-2].
+Robust and reproducible data is essential to ensure confidence in analytical results and is particularly important for large-scale metabolomics studies. Therefore raw data need to be inspected before data processing and statistical analysis in order to detect measurement bias and verify system consistency. In liquid chromatography mass spectrometry (LCMS) based metabolomics studies, proper quality control (QC) checks are particularly important to ensure reliable and comparable results within experimental measurements [1-2].
 
 <span style = "color : #FF8300">**RawHummus**</span> is an user-friendly web application for rapid data quality check based on raw QC samples. It generates an HTML report with interactive plots, statistics and illustrations that help users evaluate their data quality and LCMS system performance.
 
@@ -441,7 +441,7 @@ if(nrow(msdata$MS2) == 0){
   
   ##1.2 for MS2_mz table
   corPmass <- MS2unique %>%
-  mutate(mz_bins = cut(premz, breaks = floor(max(premz)/10))) %>% ## bin by 10 Da
+  mutate(mz_bins = cut(premz, breaks = floor(max(premz)/1))) %>% ## bin by 10 Da
   group_by(filename) %>%
   count(mz_bins) %>%
   select(n, filename) %>%
@@ -468,7 +468,7 @@ if(nrow(msdata$MS2) == 0){
       }
 
   
-  ##2.1 plot precursor ions across RT range. Split subplot for better visulization for large data files.
+  ##2.1 plot precursor ions across RT range. Split subplot for better visualization of large data files.
   MS2_RT <- MS2unique %>% 
   split(ceiling(group_indices(., filename)/nsub)) %>% 
   map(~ggplot(., aes(rt, fill = filename)) +
