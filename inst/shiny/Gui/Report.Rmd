@@ -448,7 +448,7 @@ if(nrow(msdata$MS2) == 0){
   unstack()
   
   if(is.data.frame(corPmass)){
-  TableMS2Pmass <- as.data.frame(round(ccosSim(corPmass), 3)) %>%
+  TableMS2Pmass <- as.data.frame(round(cosSim(corPmass), 3)) %>%
     dplyr::mutate_all(~ kableExtra::cell_spec(.x, background = ifelse(.x < 0.85 , "#ff8080", "#FFFFFF"))) %>%
     kableExtra::kbl(escape = FALSE, caption = "Table 5: Precursor Distribution across mass similarity") %>%
     kableExtra::kable_classic("hover", full_width = TRUE) %>%
