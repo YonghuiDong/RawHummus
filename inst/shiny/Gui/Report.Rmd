@@ -441,11 +441,11 @@ if(nrow(msdata$MS2) == 0){
   
   ##1.2 for MS2_mz table
   corPmass <- MS2unique %>%
-  mutate(mz_bins = cut(premz, breaks = floor(max(premz)/1))) %>% ## bin by 10 Da
-  group_by(filename) %>%
-  count(mz_bins) %>%
-  select(n, filename) %>%
-  unstack()
+    mutate(mz_bins = cut(premz, breaks = floor(max(premz)/10))) %>% ## bin by 10 Da
+    group_by(filename) %>%
+    count(mz_bins) %>%
+    select(n, filename) %>%
+    unstack()
   
   if(is.data.frame(corPmass)){
   TableMS2Pmass <- as.data.frame(round(cosSim(corPmass), 3)) %>%
