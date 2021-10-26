@@ -16,4 +16,4 @@ RawHummus::runGui()
 
 ## Main Functions
 
-<img src="https://github.com/YonghuiDong/RawHummus/blob/main/inst/shiny/Gui/mds/pix/Fig1.tif" width = "65%"/>
+<img src="https://github.com/YonghuiDong/RawHummus/blob/main/inst/shiny/Gui/mds/pix/Fig1.tif" width = "75%"/>
