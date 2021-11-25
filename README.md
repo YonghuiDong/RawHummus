@@ -39,4 +39,4 @@ and it will avaliable at http://0.0.0.0:3838
 
 If you find this shiny App usful, please consider citing it:
 
-RawHummus: an R Shiny App for Automated Raw Data Quality Control in Metabolomics
+- RawHummus: an R Shiny App for Automated Raw Data Quality Control in Metabolomics
