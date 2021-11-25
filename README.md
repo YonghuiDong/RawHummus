@@ -34,3 +34,9 @@ docker run --rm -p 3838:3838 biodong/rawhummus
 ```
 
 and it will avaliable at http://0.0.0.0:3838
+
+## How to cite
+
+If you find this shiny App usful, please consider citing it:
+
+RawHummus: an R Shiny App for Automated Raw Data Quality Control in Metabolomics
