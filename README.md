@@ -24,7 +24,13 @@ RawHummus::runGui()
 
 ## Docker 
 
+Dockerized RawHummus App is available on [Docker Hub](https://hub.docker.com/r/biodong/rawhummus)
+
+To run this Shiny App on your computer:
+
 ```
 docker pull biodong/rawhummus
 docker run --rm -p 3838:3838 biodong/rawhummus
 ```
+
+and it will avaliable at http://0.0.0.0:3838
