@@ -35,7 +35,7 @@ docker pull biodong/rawhummus
 docker run --rm -p 3838:3838 biodong/rawhummus
 ```
 
-and it will avaliable at http://0.0.0.0:3838
+and it will be avaliable at http://0.0.0.0:3838
 
 ## How to cite
 
