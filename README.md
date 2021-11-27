@@ -18,6 +18,8 @@ install.packages('RawHummus')
 RawHummus::runGui()
 ```
 
+A list of demo files have been provided, including log files and raw data files. Please use this [link to download](https://github.com/YonghuiDong/RawHummus_DemoData) the demo data.
+
 ## Main Functions
 
 <img src="https://github.com/YonghuiDong/RawHummus/blob/main/inst/shiny/Gui/mds/pix/Fig1.png" width = "75%"/>
