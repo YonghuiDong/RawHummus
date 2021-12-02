@@ -95,16 +95,15 @@ ggplotly(plotSumTIC)
 ```{r corTIC, echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%"}
 
 ## if scan No. is the same, corTIC is a DF, otherwise it is a list (this case is not common after RT binning)
-
 corTIC <- msdata$TIC %>%
-  filter(rt >= 0.5) %>% # trim first 0.5 min to avoid unequal scans at the beginning
-  mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.1))) %>% # bin RT 0.1 min, it is important to bin raw data
-  group_by(rt_bins, filename) %>%
-  mutate(int2 = sum(int), rt2 = mean(rt)) %>%
-  ungroup() %>%
-  select(filename, int2, rt2) %>%
-  distinct_all() %>%
-  select(int2, filename) %>%
+  dplyr::filter(rt >= 0.5) %>% # trim first 0.5 min to avoid unequal scans at the beginning
+  dplyr::mutate(rt_bins = cut(rt, breaks = floor(max(rt)/0.1))) %>% # bin RT 0.1 min, it is important to bin raw data
+  dplyr::group_by(rt_bins, filename) %>%
+  dplyr::mutate(int2 = sum(int), rt2 = mean(rt)) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(filename, int2, rt2) %>%
+  dplyr::distinct_all() %>%
+  dplyr::select(int2, filename) %>%
   unstack()
 
 ## calculate correlation.
