@@ -14,9 +14,10 @@ fluidRow(
            closable = FALSE,
            p(strong("QCviewer"), "tab enables evaluating LCMS system using QC samples"),
            p("1. The converted QC files can be uploaded in", code("Data Input Panel"), ". Note at least two QC files are required."),
-           p("2.", strong("QCviewer"), "automatically select 6 peaks accross the retention time (RT) range in your sample to evalute the system.
-             Optionally, you could add peaks of interest in", code("2.Add peaks of interest to monitor"), "panel to monitor them
-             in your QC sample. It is advised to add their RTs in the table. If the RTs are unknown, you can leave them empty.
+           p("2.", strong("QCviewer"), "automatically select 6 peaks accross the retention time (RT) range in your sample to evalute the system. The 6
+             peaks are peaks with highest ion intensity from 6 evenly sliced RT ranges.
+             Optionally, you could add peaks of interest in", code("Add peaks of interest to monitor"), "panel to evaluate your QC samples in a more targeted
+             and specific manner. It is advised to add their RTs in the table. If the RTs are unknown, you can leave them empty.
              You can set the mass accuracy (ppm) and RT windown for QCviewer to search for your peaks in",
              code("mass accuracy tolerance"), "and", code("retention time tolerance"), "panels, respectively."),
            p("3. You can click", code("Evaluate"), "button to start evaluation. Be patient, it may take a while for the evaluation process."),

@@ -14,7 +14,7 @@ To report bugs and/or request features, please use the following GitHub issue ch
 
 If you find **RawHummus** useful, please consider citing our publication:
 
-RawHummus:
+RawHummus: an R Shiny App for Automated Raw Data Quality Control in Metabolomics
 
 
 ------

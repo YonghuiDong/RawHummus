@@ -13,7 +13,7 @@ fluidRow(
            p(strong("MSconvert"), "tab provides another option for you to convert your raw file to mzML format."),
            p("There are few requirements for this option: ", span("(1)", style = "color:#f15c42"), "for safety reason,
              this function only works on your local computer;", span("(2)", style = "color:#f15c42"), "You need to have msconvert.exe software installed in your computer."),
-           p("1. To convert your files, you need to locate", span("mzconcert.exe", style = "color:#f15c42"), "software, upload",
+           p("1. To convert your files, you need to locate", span("msconvert.exe", style = "color:#f15c42"), "software, upload",
              span("raw data", style = "color:#f15c42"), "and select a", span("directory",  style = "color:#f15c42"),
              "to save the concerted files in", code("File Upload Panel")),
            p("2. Once done, you can click", code("Convert"), "button to start conversion. Be patient,

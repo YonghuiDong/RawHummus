@@ -20,6 +20,8 @@ It is worth noting that RawHummus uses the generic file formats, i.e., mzML and 
 
 Additionally, RawHummus provides an option to convert raw files using [MSConvert software](http://proteowizard.sourceforge.net/tools.shtml), with some specific system requirements. You can refer to the user guide in **MSConvert** tab for details.
 
+Demo files for RawHummus (including 30 log files and 8 QC files) can be [downloaded here](https://github.com/YonghuiDong/RawHummus_DemoData)
+
 ---
 
 # About RawHummus
