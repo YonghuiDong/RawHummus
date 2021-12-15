@@ -5,9 +5,8 @@
 [![CRAN status](http://www.r-pkg.org/badges/version/RawHummus)](https://cran.r-project.org/package=RawHummus) 
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/RawHummus)](https://cran.r-project.org/package=RawHummus)
 
-`RawHummus` is an R Shiny app for Assessing LC–MS system performance by visualising instrument log files and monitoring raw quality control samples within a project.
 
-[![CRAN status](http://www.r-pkg.org/badges/version/RawHummus)](https://cran.r-project.org/package=RawHummus)
+`RawHummus` is an R Shiny app for Assessing LC–MS system performance by visualising instrument log files and monitoring raw quality control samples within a project.
 
 ## Installation
 
