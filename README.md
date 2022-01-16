@@ -16,6 +16,12 @@ install.packages('RawHummus')
 
 ## Usage
 
+1. **To run RawHummus locally** (recommended)
+
+This option is particularly recommended when you have a large number of QC samples to test.
+
+Run the following script, the Web App will pop up and you can 
+
 ```
 RawHummus::runGui()
 ```
