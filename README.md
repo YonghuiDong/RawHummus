@@ -24,6 +24,8 @@ A list of demo files have been provided, including log files and raw data files.
 
 ## Main Functions
 
+**Figure 1.** Overview of the main functions in RawHummus
+
 <img src="https://github.com/YonghuiDong/RawHummus/blob/main/inst/shiny/Gui/mds/pix/Fig1.png" width = "75%"/>
 
 **Table 1.** Overview of quality metrics used in RawHummus report
