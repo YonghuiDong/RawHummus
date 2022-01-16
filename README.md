@@ -1,6 +1,6 @@
 # Welcome to RawHummus <img src='https://github.com/YonghuiDong/RawHummus/blob/main/inst/shiny/Gui/mds/pix/logo.png' align="right" height="130"/>
 
-## Introduction
+## 1. Introduction
 
 [![CRAN status](http://www.r-pkg.org/badges/version/RawHummus)](https://cran.r-project.org/package=RawHummus) 
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/RawHummus)](https://cran.r-project.org/package=RawHummus)
@@ -8,23 +8,29 @@
 
 `RawHummus` is an R Shiny app for assessing LC–MS system performance by visualising instrument log files and monitoring raw quality control samples within a project.
 
-## Installation
+## 2. Installation
 
 ```
 install.packages('RawHummus')
 ```
 
-## Usage
+## 3. Usage
 
-1. **To run RawHummus locally** (recommended)
+1. **To run RawHummus locally**
 
-This option is particularly recommended when you have a large number of QC samples to test.
+This option is particularly **recommended** when you have a large number of QC samples to test.
 
-Run the following script, the Web App will pop up and you can 
+Run the following script, the Web App will pop up and you can then enjoy using RawHummus
 
 ```
 RawHummus::runGui()
 ```
+
+2. **Use the website**
+
+Alternatively, you can also access RawHummus vis [https://bcdd.shinyapps.io/RawHummus/](https://bcdd.shinyapps.io/RawHummus/). Note that 
+
+3. **Demo Data**
 
 A list of demo files have been provided, including log files and raw data files. Please use this [link to download](https://github.com/YonghuiDong/RawHummus_DemoData) the demo data.
 
