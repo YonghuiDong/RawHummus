@@ -34,7 +34,7 @@ Alternatively, you can also access RawHummus vis [https://bcdd.shinyapps.io/RawH
 
 A list of demo files have been provided, including log files and raw data files. Please use this [link to download](https://github.com/YonghuiDong/RawHummus_DemoData) the demo data.
 
-## Main Functions
+## 4. Main Functions
 
 **Figure 1.** Overview of the main functions in RawHummus
 
@@ -62,7 +62,7 @@ A list of demo files have been provided, including log files and raw data files.
 
 
 
-## Docker 
+## 5. Docker 
 
 Dockerized RawHummus App is available on [Docker Hub](https://hub.docker.com/r/biodong/rawhummus)
 
@@ -75,7 +75,7 @@ docker run --rm -p 3838:3838 biodong/rawhummus
 
 and it will be avaliable at http://0.0.0.0:3838
 
-## How to cite
+## 6. How to cite
 
 If you find this shiny App usful, please consider citing it:
 
