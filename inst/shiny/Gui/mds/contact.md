@@ -2,6 +2,10 @@
 
 ------
 
+### Help & Tuturial
+
+For more detailed tutorial, please refer to [**here**](https://github.com/YonghuiDong/RawHummus)
+
 ### Report bugs:
 
 To report bugs and/or request features, please use the following GitHub issue channel: 
