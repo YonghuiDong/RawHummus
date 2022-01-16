@@ -62,6 +62,18 @@ A list of demo files have been provided, including log files and raw data files.
 |              | Cosine similarity of precursor ion distribution across mass | It measures the similarity of precursor ion distribution across mass. Cosine similarity score above 0.85 indicates that the precursor distributions across mass are similar between two files.                                                                                                                                                                                                                                                                                                                                                                  
 |              | Cosine similarity of precursor ion distribution across RT   | It measures the similarity of precursor ion distribution across mass. Cosine similarity score above 0.85 indicates that the precursor distributions across RT are similar between two files.                                                           
 
+## How RawHummus Works?
+
+In addition to allowing users to define (threoretically) unlimited numbers of mass features for system evaluation, RawHummus also automatically selects six mass features evenly across the entire RT range for a more unbiased quality check. 
+
+The process for automatically select 6 ions are as following: 
+
+- (1) the entire RT range is evenly sliced into 6 sub-RT ranges. The reason is that system variations are not always the same at different RTs and assessing only specific RT ranges (or ions) may fail to depict the overall system variation. 
+
+- (2) At each sub-RT range, ion with highest ion intensities is selected for further system evaluations. 
+
+- (3) m/z values, RTs, and ion intensities of all the 6 ions are then extracted from each QC samples and are used for system evaluation based on the parameters described in **Table 1**. The rationale behind is that ions with high intensity are less likely to be “random noise”, and their m/z values, RTs, and intensities should be consistent in a stable and well-calibrated LCMS system. Of course, this is not always the case, for instance, LCMS method usually consists of a few-minute conditioning/washing step, where most peaks are noises. It is possible that an ion peak at this RT range will be selected for system evaluation, showing a large LCMS system variation in m/z, RT, or intensity. However, this should not pose a problem in overall system evaluation, because the accompanying plot can always help the users distinguish noise peak from “real” ion signals.
+
 
 
 ## 5. Docker 
