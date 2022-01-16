@@ -62,7 +62,7 @@ A list of demo files have been provided, including log files and raw data files.
 |              | Cosine similarity of precursor ion distribution across mass | It measures the similarity of precursor ion distribution across mass. Cosine similarity score above 0.85 indicates that the precursor distributions across mass are similar between two files.                                                                                                                                                                                                                                                                                                                                                                  
 |              | Cosine similarity of precursor ion distribution across RT   | It measures the similarity of precursor ion distribution across mass. Cosine similarity score above 0.85 indicates that the precursor distributions across RT are similar between two files.                                                           
 
-## How QCViewer Works?
+### How QCViewer Works?
 
 In addition to allowing users to define (threoretically) unlimited numbers of mass features for system evaluation, RawHummus also automatically selects six mass features evenly across the entire RT range for a more unbiased quality check. 
 
