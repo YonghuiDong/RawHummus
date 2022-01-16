@@ -30,7 +30,7 @@ RawHummus::runGui()
 
 Alternatively, you can also access RawHummus vis [https://bcdd.shinyapps.io/RawHummus/](https://bcdd.shinyapps.io/RawHummus/). 
 
-> **Note** that RawHummus is deployed for free at https://www.shinyapps.io. It allows to use 1024 MB of memory. Therefore, a large numbers of files will not be uploaded and/or analyzed sucessfully. In this case, please run RawHummus locally.
+> **Note** that RawHummus is deployed for free at https://www.shinyapps.io. It allows to use 1024 MB of memory. Therefore, a large numbers of files will not be uploaded and/or analyzed successfully. In this case, please run RawHummus locally.
 
 3. **Demo Data**
 
@@ -75,7 +75,7 @@ docker pull biodong/rawhummus
 docker run --rm -p 3838:3838 biodong/rawhummus
 ```
 
-and it will be avaliable at http://0.0.0.0:3838
+and it will be available at http://0.0.0.0:3838
 
 ## 6. How to cite
 
