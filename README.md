@@ -28,7 +28,9 @@ RawHummus::runGui()
 
 2. **Use the website**
 
-Alternatively, you can also access RawHummus vis [https://bcdd.shinyapps.io/RawHummus/](https://bcdd.shinyapps.io/RawHummus/). Note that 
+Alternatively, you can also access RawHummus vis [https://bcdd.shinyapps.io/RawHummus/](https://bcdd.shinyapps.io/RawHummus/). 
+
+> **Note** that RawHummus is deployed for free at https://www.shinyapps.io. It allows to use 1024 MB of memory. Therefore, a large numbers of files will not be uploaded and/or analyzed sucessfully. In this case, please run RawHummus locally.
 
 3. **Demo Data**
 
