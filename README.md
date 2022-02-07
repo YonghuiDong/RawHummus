@@ -93,4 +93,4 @@ and it will be available at http://0.0.0.0:3838
 
 If you find this shiny App usful, please consider citing it:
 
-- RawHummus: an R Shiny App for Automated Raw Data Quality Control in Metabolomics. [Full link](https://doi.org/10.1093/bioinformatics/btac040)
+- [Dong, Y., Kazachkova, Y., Gou, M., Morgan, L., Wachsman, T., Gazit, E. and Birkler, R.I.D., 2022. RawHummus: an R Shiny App for Automated Raw Data Quality Control in Metabolomics. Bioinformatics.](https://doi.org/10.1093/bioinformatics/btac040)
