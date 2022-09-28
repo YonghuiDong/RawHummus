@@ -12,6 +12,7 @@ library(plotly)
 library(RColorBrewer)
 library(purrr)
 library(rmarkdown)
+library(markdown)
 library(kableExtra)
 
 ## free memory

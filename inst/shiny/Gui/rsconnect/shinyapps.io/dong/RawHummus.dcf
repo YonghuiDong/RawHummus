@@ -1,0 +1,13 @@
+name: RawHummus
+title: RawHummus
+username:
+account: dong
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4354604
+bundleId: 5474530
+url: https://bcdd.shinyapps.io/RawHummus/
+when: 1642360668.86396
+lastSyncTime: 1642360668.86397
+asMultiple: FALSE
+asStatic: FALSE
