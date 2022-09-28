@@ -17,7 +17,7 @@ userLogs <- reactive({
 
 # 2. Read files function
 read_log <- function(log) {
-  read.table(log, header = TRUE, check.names = FALSE, skipNul = TRUE, sep = "\t", fileEncoding = "latin1")
+  read.table(log, header = TRUE, check.names = FALSE, skipNul = TRUE, sep = "\t", fileEncoding = "latin1")[, -45]
 }
 
 # 3. Plots
