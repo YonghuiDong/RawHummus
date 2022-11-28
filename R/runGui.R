@@ -1,10 +1,11 @@
 #' @title Run RawHummus Gui
 #' @description Run RawHummus Gui
 #' @author Yonghui Dong
-#' @import shiny shinydashboardPlus shinyFiles shinyMatrix shinyvalidate shinycustomloader RaMS purrr dplyr plotly RColorBrewer rmarkdown markdown
+#' @import shiny shinydashboardPlus shinyFiles shinyMatrix shinyvalidate shinycustomloader purrr dplyr plotly RColorBrewer rmarkdown markdown
 #' @importFrom shinydashboard sidebarMenu
 #' @importFrom kableExtra row_spec
 #' @importFrom data.table address
+#' @importFrom RaMS pmppm grabMSdata
 #' @export
 #' @return Gui
 #' @examples
